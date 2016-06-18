@@ -24,4 +24,30 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
+
+    // RxAndroid
+    compile 'io.reactivex:rxandroid:1.0.1'
+    compile 'io.reactivex:rxjava:1.0.14'
+
+    // Retrofit
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
+
+    // Glide
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+//    compile 'com.android.support:support-v4:19.1.0'
+
+    // Joda-Time
+    compile 'joda-time:joda-time:2.9.4'
+
+    // Picasso
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+//    // TouchImageView
+//    compile 'com.github.MikeOrtiz:TouchImageView:v1.2.0'
+//    // GestureImageView
+//    compile 'com.github.jasonpolites:gesture-imageview:2.0'
+//    // ImageMagnifier
+//    compile 'com.github.nomanr:android-image-magnifier:c9d06e02e1'
+    // GestureViews
+    compile 'com.alexvasilkov:gesture-views:2.1.1'
 }

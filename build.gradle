@@ -15,6 +15,10 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven {
+            // for TouchImageView and GestureImageView
+            url "https://jitpack.io"
+        }
     }
 }
 

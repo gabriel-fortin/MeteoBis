@@ -13,4 +13,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <!--<com.noman.imagemagnifier.ImageMagnifier-->
+        <!--android:id="@+id/meteoImg"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
+    <com.alexvasilkov.gestures.views.GestureImageView
+        android:id="@+id/meteoImg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--<ImageView-->
+        <!--android:id="@+id/meteoImg"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
 </RelativeLayout>

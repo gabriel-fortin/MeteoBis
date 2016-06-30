@@ -1,7 +1,9 @@
 package com.example.habi.meteobis;
 
+import android.animation.ObjectAnimator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -17,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +85,37 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(TOTAL_PAGES - 1);
+        mViewPager.setPageTransformer(false, new MeteoPageTransformer());
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                Log.v(TAG, "ON PAGE SCROLLED  pos: " + position + " posOff: " + positionOffset
+                        + "  posOffPix: " + positionOffsetPixels);
+            }
+
+            @Override public void onPageSelected(int position) {
+                Log.d(TAG, "SELECTED: " + position);
+                if (position == TOTAL_PAGES-2) {
+                    ObjectAnimator anim = ObjectAnimator
+                            .ofFloat(fab, "translationX", 0f);
+                    anim.setInterpolator(AnimationUtils.loadInterpolator(MainActivity.this,
+                            android.R.interpolator.accelerate_decelerate));
+                    anim.start();
+                } else if (position == TOTAL_PAGES-1){
+                    ObjectAnimator anim = ObjectAnimator
+                            .ofFloat(fab, "translationX", mViewPager.getWidth());
+                    anim.setInterpolator(AnimationUtils.loadInterpolator(MainActivity.this,
+                            android.R.interpolator.accelerate_decelerate));
+                    anim.start();
+                }
+            }
+
+            @Override public void onPageScrollStateChanged(int state) { }
+        });
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setTranslationX(400f);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,10 +227,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -228,6 +260,15 @@ public class MainActivity extends AppCompatActivity {
                     return "SECTION 3";
             }
             return null;
+        }
+    }
+
+    public class MeteoPageTransformer implements ViewPager.PageTransformer {
+
+        @Override
+        public void transformPage(View page, float position) {
+            Log.v(TAG, "page transformer got: " + page.getClass());
+            page.setTranslationX(page.getWidth() * position / 4);
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.example.habi.meteobis;
 
 import android.animation.ObjectAnimator;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,12 +24,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+import com.squareup.okhttp.ResponseBody;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
-import org.joda.time.ReadableDuration;
+
+import java.io.IOException;
+
+import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,8 +46,12 @@ public class MainActivity extends AppCompatActivity {
     // http://www.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=2016061212&row=466&col=232&lang=pl
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    public static final int TOTAL_PAGES = 1000;
     private static DateTime newestDate;
+
+    public static final int TOTAL_PAGES = 1000;
+    public static UmMeteogramService umMeteogramService;
+    public static ParamsChangerOnSubscribe paramsChanger;
+    public static Observable<ImgData> paramsObservable;
 
     static {
 
@@ -52,6 +65,17 @@ public class MainActivity extends AppCompatActivity {
         String rounded = String.format("%d-%02d-%02dT%02d:00", year, month, day, hour);
         Log.i(TAG, "rounded time: " + rounded);
         newestDate = DateTime.parse(rounded);
+
+        umMeteogramService = new Retrofit.Builder()
+                .baseUrl("http://www.meteo.pl/")
+                .addConverterFactory(new ImgData.ConverterFactory())
+//                .addCallAdapterFactory(new ImgData.CallAdapterFactory())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build()
+                .create(UmMeteogramService.class);
+
+        paramsChanger = new ParamsChangerOnSubscribe().updateData(new ImgData(466, 232));
+        paramsObservable = Observable.create(paramsChanger);
     }
 
     /**
@@ -200,29 +224,81 @@ public class MainActivity extends AppCompatActivity {
             int hoursToShift = 6 * (TOTAL_PAGES - pageNum);
 //            DateTime dateTime = getNewestDate().minusHours(hoursToShift);
             DateTime dateTime = getNewestDate().minus(Period.hours(hoursToShift));
-            String formattedTime = formatTime(dateTime);
+            final String formattedTime = formatTime(dateTime);
             Log.d(TAG, "pageNum = " + pageNum + "    " + hoursToShift + "  =>  " + dateTime);
 
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, pageNum) + "   " + formattedTime);
 
-            ImageView img = (ImageView) rootView.findViewById(R.id.meteoImg);
-            final String url = "http://www.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=" + formattedTime + "&row=466&col=232&lang=pl";
-            Log.v(TAG, "url:  " + url);
-            Glide.with(this)
-//            Picasso.with(getActivity())
-                    .load(url)
-                    .fitCenter()
-//                    .centerCrop()
-                    .placeholder(android.R.drawable.ic_menu_help)
-                    .crossFade()
-                    .into(img);
-//                    .into(img, new Callback() {
-//                        @Override public void onSuccess() { Log.i(TAG, "img loading: success   url: " + url); }
-//                        @Override public void onError() { Log.w(TAG, "img loading: error   url: " + url); }
-//                    });
+            final ImageView img = (ImageView) rootView.findViewById(R.id.meteoImg);
+//            final String url = "http://www.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=" + formattedTime + "&row=466&col=232&lang=pl";
+//            Log.v(TAG, "url:  " + url);
+
+            // TODO: unsubscribe somewhere (onDetach? onPause? ...)
+            paramsObservable
+                    .map(imgData -> umMeteogramService.getByDate(formattedTime, imgData.col, imgData.row))
+                    .flatMap((Observable<byte[]> a) -> a)
+//                    .flatMap((Observable<ImgData.ByteArray> observableOfBytes) -> observableOfBytes)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<byte[]>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.w(TAG, "onError", e);
+                        }
+
+                        @Override
+                        public void onNext(byte[] imgBytes) {
+                            // TODO: show progress indicator
+                            Glide.with(PlaceholderFragment.this)
+                                    .load(imgBytes)
+                                    .fitCenter()
+                                    .placeholder(android.R.drawable.ic_menu_help)
+                                    .crossFade()
+                                    .into(img);
+                        }
+                    });
+
+
+//            new AsyncTask<String, Void, byte[]>() {
+//                @Override
+//                protected byte[] doInBackground(String... params) {
+//                    Call<ResponseBody> responseCall = umMeteogramService.getByDate(params[0]);
+//                    try {
+//                        ResponseBody body = responseCall.execute().body();
+//                        byte[] result = body.bytes();
+//                        body.close();
+//                        return result;
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        return null;
+//                    }
+//                }
+//
+//                @Override
+//                protected void onPostExecute(byte[] bytes) {
+//                    super.onPostExecute(bytes);
+//
+//                    Glide.with(PlaceholderFragment.this)
+//                            .load(bytes)
+//                            .fitCenter()
+//                            .placeholder(android.R.drawable.ic_menu_help)
+//                            .crossFade()
+//                            .into(img);
+//                }
+//            }.execute(formattedTime);
 
             return rootView;
+        }
+
+        @Override
+        public void onDestroyView() {
+            paramsObservable.unsubscribeOn(AndroidSchedulers.mainThread());
+            super.onDestroyView();
         }
     }
 

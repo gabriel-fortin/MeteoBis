@@ -3,9 +3,11 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -13,8 +15,14 @@ buildscript {
 }
 
 allprojects {
+    apply plugin: 'me.tatarka.retrolambda'
+    retrolambda {
+        jdk "/usr/lib/jvm/java-8-oracle/"
+    }
+
     repositories {
         jcenter()
+//        mavenCentral()
         maven {
             // for TouchImageView and GestureImageView
             url "https://jitpack.io"

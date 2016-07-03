@@ -1,7 +1,5 @@
 package com.example.habi.meteobis;
 
-import com.squareup.okhttp.ResponseBody;
-
 import retrofit.http.GET;
 import retrofit.http.Query;
 import rx.Observable;
@@ -13,6 +11,6 @@ public interface UmMeteogramService {
                                             @Query("row") int row);
 
     // aa… zostawię bo szkoda mi usuwać
-//    Observable<ImgData> getByDate(@Query("fdate") String date);
+//    Observable<RequestParams> getByDate(@Query("fdate") String date);
 //    Call<ResponseBody> getByDate(@Query("fdate") String date);
 }

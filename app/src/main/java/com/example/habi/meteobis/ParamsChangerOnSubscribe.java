@@ -6,24 +6,24 @@ import java.util.Set;
 import rx.Observable;
 import rx.Subscriber;
 
-public class ParamsChangerOnSubscribe implements Observable.OnSubscribe<ImgData> {
+public class ParamsChangerOnSubscribe implements Observable.OnSubscribe<RequestParams> {
 
-    private final Set<Subscriber<? super ImgData>> subscribers = new HashSet<>();
-    private ImgData lastData = null;
+    private final Set<Subscriber<? super RequestParams>> subscribers = new HashSet<>();
+    private RequestParams lastData = null;
 
     @Override
-    public void call(Subscriber<? super ImgData> subscriber) {
+    public void call(Subscriber<? super RequestParams> subscriber) {
         subscribers.add(subscriber);
         if (lastData != null) {
             subscriber.onNext(lastData);
         }
     }
 
-    public ParamsChangerOnSubscribe updateData(ImgData data) {
+    public ParamsChangerOnSubscribe updateData(RequestParams data) {
         lastData = data;
         if (data == null) return this;
 
-        for (Subscriber<? super ImgData> sub : subscribers) {
+        for (Subscriber<? super RequestParams> sub : subscribers) {
             if (sub.isUnsubscribed()) {
                 subscribers.remove(sub);
                 continue;

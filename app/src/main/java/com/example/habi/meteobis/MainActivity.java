@@ -1,5 +1,6 @@
 package com.example.habi.meteobis;
 
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -168,34 +169,22 @@ public class MainActivity extends AppCompatActivity {
             final ImageView img = (ImageView) rootView.findViewById(R.id.meteoImg);
 
             paramsObservable
-                    .map(imgData -> umMeteogramService.getByDate(formattedTime, imgData.col, imgData.row))
-                    .flatMap(a -> a)
-                    .subscribeOn(Schedulers.newThread())
+                    .flatMap(reqParams -> umMeteogramService.getByDate(formattedTime, reqParams.col, reqParams.row))
+                    .subscribeOn(Schedulers.io())  // download on io thread
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<byte[]>() {
-                        @Override
-                        public void onCompleted() {
+                    .subscribe(imgBytes -> {
+                        Log.d(TAG, "onNext -- bytes: " + imgBytes.length);
+                        if (imgBytes.length < 1000) {
+                            img.setImageResource(android.R.drawable.ic_delete);
+                            return;
                         }
-
-                        @Override
-                        public void onError(Throwable e) {
-                        }
-
-                        @Override
-                        public void onNext(byte[] imgBytes) {
-                            Log.d(TAG, "onNext - bytes: " + imgBytes.length);
-                            if (imgBytes.length < 1000) {
-                                img.setImageResource(android.R.drawable.ic_delete);
-                                return;
-                            }
-                            // TODO: show progress indicator
-                            Glide.with(MeteogramFragment.this)
-                                    .load(imgBytes)
-                                    .fitCenter()
-                                    .placeholder(android.R.drawable.ic_menu_help)
-                                    .crossFade()
-                                    .into(img);
-                        }
+                        // TODO: show progress indicator
+                        Glide.with(MeteogramFragment.this)
+                                .load(imgBytes)
+                                .fitCenter()
+                                .placeholder(android.R.drawable.ic_menu_help)
+                                .crossFade()
+                                .into(img);
                     });
 
             return rootView;

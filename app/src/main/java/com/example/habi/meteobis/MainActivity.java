@@ -1,6 +1,5 @@
 package com.example.habi.meteobis;
 
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,10 +22,9 @@ import com.bumptech.glide.Glide;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
+import javax.inject.Inject;
+
 import rx.Observable;
-import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -40,8 +38,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String BASE_URL = "http://www.meteo.pl/";
 
     private static DateTime newestDate;
-    public static UmMeteogramService umMeteogramService;
-    public static ParamsChangerOnSubscribe paramsChanger;
+
+    public ParamsChangerOnSubscribe paramsChanger;
+
     public static Observable<RequestParams> paramsObservable;
 
     static {
@@ -49,14 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
         DateTime now = DateTime.now();
         newestDate = Util.round(now, 6);
+    }
 
-        umMeteogramService = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(new ToByteArrayConverterFactory())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build()
-                .create(UmMeteogramService.class);
-
+    {
         paramsChanger = new ParamsChangerOnSubscribe();
         paramsChanger.updateData(new RequestParams(466, 232));
         paramsObservable = Observable.create(paramsChanger);
@@ -114,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static  DateTime getNewestDate() {
+    public static DateTime getNewestDate() {
         DateTime result = new DateTime(newestDate);
         Log.v(TAG, "newest date: " + result);
         return result;
@@ -137,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        @Inject
+        UmMeteogramService umMeteogramService;
+
         public MeteogramFragment() {
         }
 
@@ -155,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            DaggerAllDaggeryThingys
+                    .builder()
+                    .build()
+                    .inject(this);
+
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             int pageNum = getArguments().getInt(ARG_SECTION_NUMBER);
 
@@ -169,7 +171,8 @@ public class MainActivity extends AppCompatActivity {
             final ImageView img = (ImageView) rootView.findViewById(R.id.meteoImg);
 
             paramsObservable
-                    .flatMap(reqParams -> umMeteogramService.getByDate(formattedTime, reqParams.col, reqParams.row))
+                    .flatMap(reqParams -> umMeteogramService
+                            .getByDate(formattedTime, reqParams.col, reqParams.row))
                     .subscribeOn(Schedulers.io())  // download on io thread
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(imgBytes -> {

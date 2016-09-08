@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -11,17 +12,39 @@
     <TextView
         android:id="@+id/section_label"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        />
 
     <!--<com.noman.imagemagnifier.ImageMagnifier-->
         <!--android:id="@+id/meteoImg"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent" />-->
 
-    <com.alexvasilkov.gestures.views.GestureImageView
-        android:id="@+id/meteoImg"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/section_label"
+        android:layout_centerInParent="true"
+        android:minHeight="70dp"
+        android:minWidth="70dp"
+        android:layout_margin="10dp"
+        android:padding="30dp"
+        android:alpha="0"
+        app:cardCornerRadius="@dimen/card_corner_radius"
+        android:elevation="15dp"
+        >
+
+        <com.alexvasilkov.gestures.views.GestureImageView
+            android:id="@+id/meteoImg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/img_padding"
+            android:scaleType="center"
+            />
+
+    </android.support.v7.widget.CardView>
+
 
     <!--<ImageView-->
         <!--android:id="@+id/meteoImg"-->

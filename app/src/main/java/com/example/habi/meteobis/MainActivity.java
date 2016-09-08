@@ -1,7 +1,12 @@
 package com.example.habi.meteobis;
 
+import android.animation.ObjectAnimator;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -14,10 +19,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.ViewParent;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -83,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(meteogramsPagerAdapter);
         mViewPager.setCurrentItem(TOTAL_PAGES - 1);
         mViewPager.addOnPageChangeListener(new FabVisibilityChanger(fab));
+
+        // TODO: move margin to dimens and adjust with linked margins and paddings
+        mViewPager.setPageMargin(-60);
+        mViewPager.setOffscreenPageLimit(1);  // may want to change because of the margin
     }
 
 
@@ -177,20 +187,58 @@ public class MainActivity extends AppCompatActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(imgBytes -> {
                         Log.d(TAG, "onNext -- bytes: " + imgBytes.length);
+                        animateCardIn(img);
+
                         if (imgBytes.length < 1000) {
-                            img.setImageResource(android.R.drawable.ic_delete);
+                            displayUnavailableImage(img);
                             return;
                         }
+
+                        displayImageFromBytes(img, imgBytes);
+
                         // TODO: show progress indicator
-                        Glide.with(MeteogramFragment.this)
-                                .load(imgBytes)
-                                .fitCenter()
-                                .placeholder(android.R.drawable.ic_menu_help)
-                                .crossFade()
-                                .into(img);
+
+                    }, error -> {
+                        Log.w(TAG, "download error?  pageNum: " + pageNum);
+                        Toast.makeText(getContext(), "img download error", Toast.LENGTH_SHORT).show();
                     });
 
             return rootView;
+        }
+
+        private void animateCardIn(ImageView img) {
+            ViewParent card = img.getParent();
+            int interpolator = android.R.interpolator.linear;
+
+            ObjectAnimator anim = ObjectAnimator.ofFloat(card, "alpha", 1f);
+            anim.setInterpolator(AnimationUtils.loadInterpolator(getContext(), interpolator));
+            anim.start();
+        }
+
+        private static void displayUnavailableImage(ImageView img) {
+            img.setImageResource(android.R.drawable.ic_delete);
+
+            CardView card = (CardView) img.getParent();
+            ViewGroup.LayoutParams cardLP = card.getLayoutParams();
+
+            card.setBackgroundColor(Color.TRANSPARENT);
+            cardLP.height = 300;  // for vertical positioning
+        }
+
+        private static void displayImageFromBytes(ImageView img, byte[] imgBytes) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length);
+            img.setImageBitmap(bitmap);
+
+            int width = img.getWidth();
+            int intrinsicWidth = img.getDrawable().getIntrinsicWidth();
+            int intrinsicHeight = img.getDrawable().getIntrinsicHeight();
+
+            CardView card = (CardView) img.getParent();
+            ViewGroup.LayoutParams cardLP = card.getLayoutParams();
+
+            // adjust card height to match the image
+            double scaleX = (double)width / intrinsicWidth;
+            cardLP.height = (int) (intrinsicHeight * scaleX);
         }
 
         @Override

@@ -41,6 +41,7 @@ android {
         dev_noDex {
             // aiming for ART gives faster build times
             minSdkVersion 21
+            applicationId "com.example.habi.meteobis.dev"
         }
         prod {
         }

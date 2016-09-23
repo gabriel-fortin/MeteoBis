@@ -28,6 +28,8 @@ import android.widget.Toast;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import rx.Observable;
@@ -74,6 +76,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        prepareFab();
+
+        meteogramsPagerAdapter = new MeteogramsPagerAdapter(getSupportFragmentManager());
+        prepareViewPager();
+    }
+
+    private void prepareFab() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setTranslationX(400f);
         fab.setOnClickListener(view -> {
@@ -81,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
         });
+    }
 
-        meteogramsPagerAdapter = new MeteogramsPagerAdapter(getSupportFragmentManager());
-
+    private void prepareViewPager() {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(meteogramsPagerAdapter);
@@ -129,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         int month = dateTime.monthOfYear().get();
         int day = dateTime.dayOfMonth().get();
         int hour = dateTime.hourOfDay().get();
-        String result = String.format("%d%02d%02d%02d", year, month, day, hour);
+        String result = String.format(Locale.UK, "%d%02d%02d%02d", year, month, day, hour);
         Log.v(TAG, "formatted time: " + result);
         return result;
     }

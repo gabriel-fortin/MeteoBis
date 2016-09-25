@@ -39,8 +39,9 @@ android {
     }
     productFlavors {
         dev_noDex {
-            // aiming for ART gives faster build times
+            // aiming for ART gives faster build times (because multidexing is supported natively)
             minSdkVersion 21
+
             applicationId "com.example.habi.meteobis.dev"
         }
         prod {

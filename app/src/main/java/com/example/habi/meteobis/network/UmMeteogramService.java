@@ -1,4 +1,4 @@
-package com.example.habi.meteobis;
+package com.example.habi.meteobis.network;
 
 import retrofit.http.GET;
 import retrofit.http.Query;
@@ -10,7 +10,4 @@ public interface UmMeteogramService {
                                             @Query("col") int col,
                                             @Query("row") int row);
 
-    // aa… zostawię bo szkoda mi usuwać
-//    Observable<RequestParams> getByDate(@Query("fdate") String date);
-//    Call<ResponseBody> getByDate(@Query("fdate") String date);
 }

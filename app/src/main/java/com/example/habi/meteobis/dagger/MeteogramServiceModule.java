@@ -1,4 +1,8 @@
-package com.example.habi.meteobis;
+package com.example.habi.meteobis.dagger;
+
+import com.example.habi.meteobis.MainActivity;
+import com.example.habi.meteobis.network.ToByteArrayConverterFactory;
+import com.example.habi.meteobis.network.UmMeteogramService;
 
 import dagger.Module;
 import dagger.Provides;

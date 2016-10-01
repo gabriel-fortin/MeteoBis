@@ -1,29 +1,31 @@
 package com.example.habi.meteobis;
 
+import com.example.habi.meteobis.model.LocationRequestParams;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import rx.Observable;
 import rx.Subscriber;
 
-public class ParamsChangerOnSubscribe implements Observable.OnSubscribe<RequestParams> {
+public class ParamsChangerOnSubscribe implements Observable.OnSubscribe<LocationRequestParams> {
 
-    private final Set<Subscriber<? super RequestParams>> subscribers = new HashSet<>();
-    private RequestParams lastData = null;
+    private final Set<Subscriber<? super LocationRequestParams>> subscribers = new HashSet<>();
+    private LocationRequestParams lastData = null;
 
     @Override
-    public void call(Subscriber<? super RequestParams> subscriber) {
+    public void call(Subscriber<? super LocationRequestParams> subscriber) {
         subscribers.add(subscriber);
         if (lastData != null) {
             subscriber.onNext(lastData);
         }
     }
 
-    public ParamsChangerOnSubscribe updateData(RequestParams data) {
+    public ParamsChangerOnSubscribe updateData(LocationRequestParams data) {
         lastData = data;
         if (data == null) return this;
 
-        for (Subscriber<? super RequestParams> sub : subscribers) {
+        for (Subscriber<? super LocationRequestParams> sub : subscribers) {
             if (sub.isUnsubscribed()) {
                 subscribers.remove(sub);
                 continue;

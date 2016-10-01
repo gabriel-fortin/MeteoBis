@@ -24,18 +24,16 @@ import android.view.ViewParent;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.habi.meteobis.dagger.DaggerMeteogramComponent;
+import com.example.habi.meteobis.model.LocationRequestParams;
+import com.example.habi.meteobis.mvp.MeteogramPresenter;
 
 import org.joda.time.DateTime;
-import org.joda.time.Period;
-
-import java.util.Locale;
 
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
     public ParamsChangerOnSubscribe paramsChanger;
 
-    public static Observable<RequestParams> paramsObservable;
+    public static Observable<LocationRequestParams> paramsObservable;
 
-    // A reliable context source was needed so you can enjoy this ugliness
+    // A reliable context source was needed; in effect you can enjoy this ugliness:
     public static Activity activityInstance;
 
     static {
@@ -64,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     {
         paramsChanger = new ParamsChangerOnSubscribe();
-        paramsChanger.updateData(new RequestParams(466, 232));
+        paramsChanger.updateData(new LocationRequestParams(466, 232));
         paramsObservable = Observable.create(paramsChanger);
         activityInstance = this;
     }
@@ -138,17 +136,10 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    public static String formatTime(DateTime dateTime) {
-        int year = dateTime.year().get();
-        int month = dateTime.monthOfYear().get();
-        int day = dateTime.dayOfMonth().get();
-        int hour = dateTime.hourOfDay().get();
-        String result = String.format(Locale.UK, "%d%02d%02d%02d", year, month, day, hour);
-        Log.v(TAG, "formatted time: " + result);
-        return result;
-    }
 
-    public static class MeteogramFragment extends Fragment {
+    public static class MeteogramFragment
+            extends Fragment
+            implements MeteogramPresenter.MeteogramItemView {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -156,9 +147,16 @@ public class MainActivity extends AppCompatActivity {
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         @Inject
-        UmMeteogramService umMeteogramService;
+        MeteogramPresenter presenter;
+
+        private TextView sectionLabel;
+        private ImageView img;
+        private int position;
 
         public MeteogramFragment() {
+            DaggerMeteogramComponent
+                    .create()
+                    .inject(this);
         }
 
         /**
@@ -176,54 +174,58 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            DaggerAllDaggeryThingys
-                    .builder()
-                    .build()
-                    .inject(this);
-
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             int pageNum = getArguments().getInt(ARG_SECTION_NUMBER);
 
-            int hoursToShift = 6 * (TOTAL_PAGES - pageNum);
-            DateTime dateTime = getNewestDate().minus(Period.hours(hoursToShift));
-            final String formattedTime = formatTime(dateTime);
-            Log.v(TAG, "pageNum = " + pageNum + "    " + hoursToShift + "  =>  " + dateTime);
-
             // show dev info (only visible in dev_noDex flavour
-            TextView sectionLabel = (TextView) rootView.findViewById(R.id.section_label);
-            sectionLabel.setText(getString(R.string.section_format, pageNum) + "   " + formattedTime);
+            sectionLabel = (TextView) rootView.findViewById(R.id.section_label);
+            sectionLabel.setText(getString(R.string.section_format, pageNum));
 
-            final ImageView img = (ImageView) rootView.findViewById(R.id.meteoImg);
-
-            paramsObservable
-                    .flatMap(reqParams -> umMeteogramService
-                            .getByDate(formattedTime, reqParams.col, reqParams.row))
-                    .subscribeOn(Schedulers.io())  // download on io thread
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(imgBytes -> {
-                        Log.d(TAG, "onNext -- bytes: " + imgBytes.length);
-                        animateCardIn(img);
-
-                        if (imgBytes.length < 1000) {
-                            displayUnavailableImage(img);
-                            return;
-                        }
-
-                        displayImageFromBytes(img, imgBytes);
-
-                        // TODO: show progress indicator
-
-                    }, error -> {
-                        Log.w(TAG, "download error?  pageNum: " + pageNum);
-                        error.printStackTrace();
-                        // using 'activityInstance' because 'getContext()' can be null when swiping pages quickly
-                        Toast.makeText(activityInstance, "img download error", Toast.LENGTH_SHORT).show();
-                    });
+            img = (ImageView) rootView.findViewById(R.id.meteoImg);
+            position = -(TOTAL_PAGES - pageNum);
 
             return rootView;
         }
 
-        private void animateCardIn(ImageView img) {
+        @Override
+        public void onResume() {
+            super.onResume();
+            presenter.attach(this, position);
+        }
+
+        @Override
+        public void onPause() {
+            presenter.detach(this);
+            super.onPause();
+        }
+
+        @Override
+        public void meteogramLoading() {
+            sectionLabel.setText("loading...");
+            // TODO: show something when meteogram is loading?
+            //       → it needs to add something to the layout file, probably
+        }
+
+        @Override
+        public void meteogramImage(byte[] imageBytes) {
+            sectionLabel.setText("done: image");
+            animateCardIn(img);
+            displayImageFromBytes(img, imageBytes);
+        }
+
+        @Override
+        public void meteogramNotAvailable() {
+            sectionLabel.setText("done: unavailable");
+            animateCardIn(img);
+            displayUnavailableImage(img);
+        }
+
+        @Override
+        public void meteogramError(String text) {
+            sectionLabel.setText("error: " + text);
+        }
+
+        private static void animateCardIn(ImageView img) {
             ViewParent card = img.getParent();
             int interpolator = android.R.interpolator.linear;
 
@@ -259,11 +261,6 @@ public class MainActivity extends AppCompatActivity {
             cardLP.height = (int) (intrinsicHeight * scaleX);
         }
 
-        @Override
-        public void onDestroyView() {
-            paramsObservable.unsubscribeOn(AndroidSchedulers.mainThread());
-            super.onDestroyView();
-        }
     }
 
 }

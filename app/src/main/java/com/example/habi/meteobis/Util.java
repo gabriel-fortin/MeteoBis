@@ -4,6 +4,8 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
+import java.util.Locale;
+
 /**
  * Created by Gabriel Fortin
  */
@@ -26,6 +28,16 @@ public class Util {
 
         DateTime result = new DateTime(year, month, day, hour, 0, date.getZone());
         Log.d(TAG, "rounding:  " + date + "  -->  " + result);
+        return result;
+    }
+
+    public static String formatTime(DateTime dateTime) {
+        int year = dateTime.year().get();
+        int month = dateTime.monthOfYear().get();
+        int day = dateTime.dayOfMonth().get();
+        int hour = dateTime.hourOfDay().get();
+        String result = String.format(Locale.UK, "%d%02d%02d%02d", year, month, day, hour);
+        Log.v(TAG, "formatted time: " + result);
         return result;
     }
 }

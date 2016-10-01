@@ -1,4 +1,4 @@
-package com.example.habi.meteobis;
+package com.example.habi.meteobis.network;
 
 import android.util.Log;
 

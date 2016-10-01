@@ -184,8 +184,9 @@ public class MainActivity extends AppCompatActivity {
             final String formattedTime = formatTime(dateTime);
             Log.v(TAG, "pageNum = " + pageNum + "    " + hoursToShift + "  =>  " + dateTime);
 
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, pageNum) + "   " + formattedTime);
+            // show dev info (only visible in dev_noDex flavour
+            TextView sectionLabel = (TextView) rootView.findViewById(R.id.section_label);
+            sectionLabel.setText(getString(R.string.section_format, pageNum) + "   " + formattedTime);
 
             final ImageView img = (ImageView) rootView.findViewById(R.id.meteoImg);
 

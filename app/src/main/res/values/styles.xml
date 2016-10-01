@@ -17,4 +17,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="visible_in__dev_noDex">
+        <item name="android:visibility">invisible</item>
+    </style>
+
 </resources>

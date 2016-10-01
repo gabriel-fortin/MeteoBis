@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="visible_in__dev_noDex">
+        <item name="android:visibility">visible</item>
+    </style>
+
+</resources>

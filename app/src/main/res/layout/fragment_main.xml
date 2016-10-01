@@ -11,6 +11,7 @@
 
     <TextView
         android:id="@+id/section_label"
+        style="@style/visible_in__dev_noDex"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

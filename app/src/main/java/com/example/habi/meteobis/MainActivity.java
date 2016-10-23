@@ -1,6 +1,7 @@
 package com.example.habi.meteobis;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static Observable<RequestParams> paramsObservable;
 
+    // A reliable context source was needed so you can enjoy this ugliness
+    public static Activity activityInstance;
+
     static {
         Log.i(TAG, "======== START =========");
 
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         paramsChanger = new ParamsChangerOnSubscribe();
         paramsChanger.updateData(new RequestParams(466, 232));
         paramsObservable = Observable.create(paramsChanger);
+        activityInstance = this;
     }
 
     private MeteogramsPagerAdapter meteogramsPagerAdapter;
@@ -210,7 +215,9 @@ public class MainActivity extends AppCompatActivity {
 
                     }, error -> {
                         Log.w(TAG, "download error?  pageNum: " + pageNum);
-                        Toast.makeText(getContext(), "img download error", Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                        // using 'activityInstance' because 'getContext()' can be null when swiping pages quickly
+                        Toast.makeText(activityInstance, "img download error", Toast.LENGTH_SHORT).show();
                     });
 
             return rootView;
@@ -221,7 +228,8 @@ public class MainActivity extends AppCompatActivity {
             int interpolator = android.R.interpolator.linear;
 
             ObjectAnimator anim = ObjectAnimator.ofFloat(card, "alpha", 1f);
-            anim.setInterpolator(AnimationUtils.loadInterpolator(getContext(), interpolator));
+            // using 'activityInstance' because 'getContext()' can be null when swiping pages quickly
+            anim.setInterpolator(AnimationUtils.loadInterpolator(activityInstance, interpolator));
             anim.start();
         }
 

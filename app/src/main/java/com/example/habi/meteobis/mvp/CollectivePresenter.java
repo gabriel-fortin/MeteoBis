@@ -1,7 +1,6 @@
 package com.example.habi.meteobis.mvp;
 
-import com.example.habi.meteobis.mvp.MeteogramPresenter;
-import com.example.habi.meteobis.network.UmMeteogramService;
+import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,19 +11,20 @@ import javax.inject.Inject;
  * Created by Gabriel Fortin
  */
 
+/** This class is currently not used. It's not even in a usable state. */
 public class CollectivePresenter implements MeteogramPresenter {
 
-    UmMeteogramService umMeteogramService;
+    UmMeteogramRetrofitService umMeteogramService;
 
     List<Entry> views = new ArrayList<>();
 
     @Inject
-    public CollectivePresenter(UmMeteogramService umMeteogramService) {
+    public CollectivePresenter(UmMeteogramRetrofitService umMeteogramService) {
         this.umMeteogramService = umMeteogramService;
     }
 
     @Override
-    public void attach(MeteogramItemView itemView, int position) {
+    public void attach(ItemView itemView, int position) {
         views.add(new Entry(position, itemView));
         itemView.meteogramLoading();
 
@@ -36,7 +36,7 @@ public class CollectivePresenter implements MeteogramPresenter {
     }
 
     @Override
-    public void detach(MeteogramItemView itemView) {
+    public void detach(ItemView itemView) {
 
     }
 
@@ -48,9 +48,9 @@ public class CollectivePresenter implements MeteogramPresenter {
 
     static class Entry {
         final int position;
-        final MeteogramItemView view;
+        final ItemView view;
 
-        public Entry(int position, MeteogramItemView view) {
+        public Entry(int position, ItemView view) {
             this.position = position;
             this.view = view;
         }

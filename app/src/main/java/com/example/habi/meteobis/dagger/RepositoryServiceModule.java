@@ -1,8 +1,8 @@
 package com.example.habi.meteobis.dagger;
 
 import com.example.habi.meteobis.MainActivity;
-import com.example.habi.meteobis.network.ToByteArrayConverterFactory;
-import com.example.habi.meteobis.network.UmMeteogramService;
+import com.example.habi.meteobis.network.ByteArrayConverterFactory;
+import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import dagger.Module;
 import dagger.Provides;
@@ -10,15 +10,15 @@ import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 
 @Module
-public class MeteogramServiceModule {
+public class RepositoryServiceModule {
 
     @Provides
-    static UmMeteogramService provideUmMeteogramService() {
+    static UmMeteogramRetrofitService provideUmMeteogramService() {
         return new Retrofit.Builder()
                 .baseUrl(MainActivity.BASE_URL)
-                .addConverterFactory(new ToByteArrayConverterFactory())
+                .addConverterFactory(new ByteArrayConverterFactory())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
-                .create(UmMeteogramService.class);
+                .create(UmMeteogramRetrofitService.class);
     }
 }

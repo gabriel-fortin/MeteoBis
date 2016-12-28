@@ -1,17 +1,18 @@
 package com.example.habi.meteobis.dagger;
 
-import com.example.habi.meteobis.MainActivity;
+import com.example.habi.meteobis.MeteoFragment;
 import com.example.habi.meteobis.mvp.MeteogramPresenter;
-import com.example.habi.meteobis.network.UmMeteogramService;
+import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
 
 @Singleton
-@Component(modules = {MeteogramServiceModule.class, MeteogramPresenterModule.class})
+@Component(modules = {RepositoryServiceModule.class, MeteogramPresenterModule.class})
 public interface MeteogramComponent {
-    UmMeteogramService provideUmMeteogramService();
+    UmMeteogramRetrofitService provideUmMeteogramService();
     MeteogramPresenter provideMeteogramPresenter();
-    void inject(MainActivity.MeteogramFragment mf);
+
+    void inject(MeteoFragment mf);
 }

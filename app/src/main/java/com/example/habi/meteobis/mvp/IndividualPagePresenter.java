@@ -3,6 +3,7 @@ package com.example.habi.meteobis.mvp;
 
 import android.util.Log;
 
+import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.network.ConfiguredUmService;
 
 import java.util.Locale;
@@ -22,7 +23,7 @@ import rx.schedulers.Schedulers;
 public class IndividualPagePresenter implements MeteogramPresenter {
     private String TAG = IndividualPagePresenter.class.getSimpleName();
 
-    private MeteogramItemView view;
+    private ItemView view;
     private int pos;
 
     private final ConfiguredUmService configuredService;
@@ -35,7 +36,7 @@ public class IndividualPagePresenter implements MeteogramPresenter {
     }
 
     @Override
-    public void attach(MeteogramItemView itemView, int position) {
+    public void attach(ItemView itemView, int position) {
         TAG = String.format(Locale.UK,
                 "%s#%s(%d)",
                 IndividualPagePresenter.class.getSimpleName(),
@@ -60,26 +61,22 @@ public class IndividualPagePresenter implements MeteogramPresenter {
                 .subscribe(new Observer<Object>() {
                     @Override
                     public void onCompleted() {
-                        Log.e(TAG, "onCompleted");
+                        Log.e(TAG, "'onCompleted' where the stream is expected to last forever");
                         String msg = "observable from ConfiguredUmService completed";
                         view.meteogramError(msg);
-//                        throw new RuntimeException(msg);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "onError");
+                        Log.w(TAG, "'onError': " + e);
                         String msg = "observable from ConfiguredUmService erred: " + e;
                         view.meteogramError(msg);
-//                        throw new RuntimeException(msg, e);
                     }
 
                     @Override
                     public void onNext(Object o) {
                         Log.d(TAG, "onNext: " + o);
-                        if (o instanceof ConfiguredUmService.ThreeParams) {
-                            ConfiguredUmService.ThreeParams threeParams
-                                    = (ConfiguredUmService.ThreeParams) o;
+                        if (o instanceof FullParams) {
                             view.meteogramLoading();
                             return;
                         }
@@ -95,8 +92,8 @@ public class IndividualPagePresenter implements MeteogramPresenter {
                         }
 
                         String msg = "unrecognised object in merged observable";
+                        Log.w(TAG, msg);
                         view.meteogramError(msg);
-//                        throw new RuntimeException(msg);
                     }
                 });
 
@@ -104,14 +101,14 @@ public class IndividualPagePresenter implements MeteogramPresenter {
     }
 
     @Override
-    public void detach(MeteogramItemView itemView) {  // TODO: może usunąć argument? po co on?
-        Log.d(TAG, "detach(),  position = " + pos);
+    public void detach(ItemView itemView) {  // TODO: może usunąć argument? po co on?
+        Log.d(TAG, "detach()");
         if (itemView != view) throw new RuntimeException("trying to detach a wrong view");
 
         subscription.unsubscribe();
         view.meteogramLoading();
 
-        // TODO: unsubscribe and the like
+        // TODO: verify that unsubscribing is done correctly
 
         view = null;
     }

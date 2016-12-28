@@ -16,8 +16,7 @@ public class MeteogramsPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         Log.v(TAG, "getItem: " + position);
         // getItem is called to instantiate the fragment for the given page.
-        // Return a MeteogramFragment (defined as a static inner class below).
-        return MainActivity.MeteogramFragment.newInstance(position + 1);
+        return MeteoFragment.newInstance(position + 1);
     }
 
     @Override

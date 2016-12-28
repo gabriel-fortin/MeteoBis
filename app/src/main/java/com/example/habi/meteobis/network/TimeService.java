@@ -17,6 +17,7 @@ import rx.subjects.BehaviorSubject;
 public class TimeService {
     private static final String TAG = TimeService.class.getSimpleName();
 
+    /** Emits the first item immediately upon subscribing */
     public static Observable<DateTime> getCurrentTimeStick(int interval, TimeUnit timeUnit) {
         if (timeUnit != TimeUnit.HOURS) {
             String msg = "only 'HOUR' time unit is supported";

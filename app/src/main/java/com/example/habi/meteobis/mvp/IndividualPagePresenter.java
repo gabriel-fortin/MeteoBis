@@ -54,6 +54,10 @@ public class IndividualPagePresenter implements MeteogramPresenter {
 
         view.meteogramLoading();
 
+        startObserving();
+    }
+
+    private void startObserving() {
         subscription = Observable
                 .merge(configuredService.get(), configuredService.get(pos))
                 .subscribeOn(Schedulers.io())
@@ -96,8 +100,6 @@ public class IndividualPagePresenter implements MeteogramPresenter {
                         view.meteogramError(msg);
                     }
                 });
-
-
     }
 
     @Override

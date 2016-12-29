@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private MeteogramsPagerAdapter meteogramsPagerAdapter;
     private ViewPager mViewPager;
     private FloatingActionButton fab;
-        // FIXME: fab disappears on screen rotation
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareFab() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setTranslationX(400f);
         fab.setOnClickListener(view -> {
             mViewPager.setCurrentItem(TOTAL_PAGES - 1);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -56,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(meteogramsPagerAdapter);
-        mViewPager.setCurrentItem(TOTAL_PAGES - 1);
         mViewPager.addOnPageChangeListener(new FabVisibilityChanger(fab));
+        mViewPager.setCurrentItem(TOTAL_PAGES - 1);
 
         // TODO: move margin to dimens and adjust with linked margins and paddings
         mViewPager.setPageMargin(-60);

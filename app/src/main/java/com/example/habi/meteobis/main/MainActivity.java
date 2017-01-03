@@ -1,4 +1,4 @@
-package com.example.habi.meteobis;
+package com.example.habi.meteobis.main;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -10,14 +10,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.habi.meteobis.R;
+import com.example.habi.meteobis.meteogram.MeteogramsPagerAdapter;
+
 public class MainActivity extends AppCompatActivity {
-
-    // http://www.meteo.pl/um/php/meteorogram_list.php?ntype=0u&fdate=2016061212&row=466&col=232&lang=pl&cname=Krak%F3w
-    // http://www.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=2016061212&row=466&col=232&lang=pl
-
     private static final String TAG = MainActivity.class.getSimpleName();
-    public static final int TOTAL_PAGES = 1000;
-    public static final String BASE_URL = "http://www.meteo.pl/";
 
     static {
         Log.i(TAG, "======== START =========");
@@ -44,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private void prepareFab() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            mViewPager.setCurrentItem(TOTAL_PAGES - 1);
+            mViewPager.setCurrentItem(Config.TOTAL_PAGES - 1);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
         });
@@ -55,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(meteogramsPagerAdapter);
         mViewPager.addOnPageChangeListener(new FabVisibilityChanger(fab));
-        mViewPager.setCurrentItem(TOTAL_PAGES - 1);
+        mViewPager.setCurrentItem(Config.TOTAL_PAGES - 1);
 
         // TODO: move margin to dimens and adjust with linked margins and paddings
         mViewPager.setPageMargin(-60);

@@ -1,10 +1,10 @@
 package com.example.habi.meteobis.dagger;
 
 import com.example.habi.meteobis.model.LocationParams;
-import com.example.habi.meteobis.mvp.IndividualPagePresenter;
+import com.example.habi.meteobis.meteogram.IndividualPagePresenter;
 import com.example.habi.meteobis.mvp.MeteogramPresenter;
-import com.example.habi.meteobis.network.ConfiguredUmService;
-import com.example.habi.meteobis.network.TimeService;
+import com.example.habi.meteobis.service.ConfiguredUmService;
+import com.example.habi.meteobis.service.TimeService;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import org.joda.time.DateTime;

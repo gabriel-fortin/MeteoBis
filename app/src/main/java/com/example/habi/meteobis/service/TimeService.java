@@ -1,8 +1,8 @@
-package com.example.habi.meteobis.network;
+package com.example.habi.meteobis.service;
 
 import android.util.Log;
 
-import com.example.habi.meteobis.Util;
+import com.example.habi.meteobis.main.Util;
 
 import org.joda.time.DateTime;
 

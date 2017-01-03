@@ -2,9 +2,10 @@ package com.example.habi.meteobis.network;
 
 import android.util.Log;
 
-import com.example.habi.meteobis.Util;
+import com.example.habi.meteobis.main.Util;
 import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.model.LocationParams;
+import com.example.habi.meteobis.service.ConfiguredUmService;
 
 import org.joda.time.DateTime;
 import org.junit.Before;

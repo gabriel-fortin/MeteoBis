@@ -1,4 +1,4 @@
-package com.example.habi.meteobis;
+package com.example.habi.meteobis.meteogram;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
@@ -15,6 +15,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.habi.meteobis.main.Config;
+import com.example.habi.meteobis.R;
 import com.example.habi.meteobis.dagger.DaggerMeteogramComponent;
 import com.example.habi.meteobis.mvp.MeteogramPresenter;
 
@@ -29,7 +31,7 @@ public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemVi
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     @Inject
-    MeteogramPresenter presenter;
+    public MeteogramPresenter presenter;
 
     private TextView sectionLabel;
     private ImageView img;
@@ -65,7 +67,7 @@ public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemVi
         sectionLabel.setText(getString(R.string.section_format, pageNum));
 
         img = (ImageView) rootView.findViewById(R.id.meteoImg);
-        position = -(MainActivity.TOTAL_PAGES - pageNum);
+        position = -(Config.TOTAL_PAGES - pageNum);
 
         return rootView;
     }

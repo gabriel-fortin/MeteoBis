@@ -1,10 +1,11 @@
-package com.example.habi.meteobis.mvp;
+package com.example.habi.meteobis.meteogram;
 
 
 import android.util.Log;
 
 import com.example.habi.meteobis.model.FullParams;
-import com.example.habi.meteobis.network.ConfiguredUmService;
+import com.example.habi.meteobis.mvp.MeteogramPresenter;
+import com.example.habi.meteobis.service.ConfiguredUmService;
 
 import java.util.Locale;
 

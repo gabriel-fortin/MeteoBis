@@ -1,4 +1,4 @@
-package com.example.habi.meteobis.network;
+package com.example.habi.meteobis.service;
 
 /**
  * Created by Gabriel Fortin
@@ -6,9 +6,10 @@ package com.example.habi.meteobis.network;
 
 import android.util.Log;
 
-import com.example.habi.meteobis.Util;
+import com.example.habi.meteobis.main.Util;
 import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.model.LocationParams;
+import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;

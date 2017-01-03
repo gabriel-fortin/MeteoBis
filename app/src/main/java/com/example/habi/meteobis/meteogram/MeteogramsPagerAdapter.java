@@ -1,9 +1,11 @@
-package com.example.habi.meteobis;
+package com.example.habi.meteobis.meteogram;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
+
+import com.example.habi.meteobis.main.Config;
 
 public class MeteogramsPagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = MeteogramsPagerAdapter.class.getSimpleName();
@@ -21,7 +23,7 @@ public class MeteogramsPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return MainActivity.TOTAL_PAGES;
+        return Config.TOTAL_PAGES;
     }
 
     @Override

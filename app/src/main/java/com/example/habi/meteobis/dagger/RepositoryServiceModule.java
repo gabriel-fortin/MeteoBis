@@ -1,6 +1,6 @@
 package com.example.habi.meteobis.dagger;
 
-import com.example.habi.meteobis.MainActivity;
+import com.example.habi.meteobis.main.Config;
 import com.example.habi.meteobis.network.ByteArrayConverterFactory;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
@@ -15,7 +15,7 @@ public class RepositoryServiceModule {
     @Provides
     static UmMeteogramRetrofitService provideUmMeteogramService() {
         return new Retrofit.Builder()
-                .baseUrl(MainActivity.BASE_URL)
+                .baseUrl(Config.BASE_URL)
                 .addConverterFactory(new ByteArrayConverterFactory())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()

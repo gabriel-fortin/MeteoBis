@@ -1,6 +1,6 @@
 package com.example.habi.meteobis.dagger;
 
-import com.example.habi.meteobis.MeteoFragment;
+import com.example.habi.meteobis.meteogram.MeteoFragment;
 import com.example.habi.meteobis.mvp.MeteogramPresenter;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 

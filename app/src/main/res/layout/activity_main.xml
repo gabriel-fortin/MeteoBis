@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/background_whitish"
-    tools:context="com.example.habi.meteobis.MainActivity">
+    tools:context="com.example.habi.meteobis.main.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"

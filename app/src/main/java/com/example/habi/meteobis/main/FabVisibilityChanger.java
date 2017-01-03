@@ -1,4 +1,4 @@
-package com.example.habi.meteobis;
+package com.example.habi.meteobis.main;
 
 import android.animation.ObjectAnimator;
 import android.support.annotation.InterpolatorRes;
@@ -36,7 +36,7 @@ class FabVisibilityChanger implements ViewPager.OnPageChangeListener {
     @Override
     public void onPageSelected(int position) {
         Log.v(TAG, "selected page: " + position);
-        if (position <= MainActivity.TOTAL_PAGES - 2) {
+        if (position <= Config.TOTAL_PAGES - 2) {
             changer.show(fab);
         } else {
             changer.hide(fab);

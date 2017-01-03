@@ -38,7 +38,7 @@ public class ConfiguredUmService {
     private final Observable<LocationParams> locationObs;
 
     //output observable
-    private final Observable<FullParams> threeParamsObs;
+    private final Observable<FullParams> fullParamsObs;
 
     @Inject
     public ConfiguredUmService(UmMeteogramRetrofitService umService,
@@ -54,7 +54,7 @@ public class ConfiguredUmService {
         final Func2<DateTime, LocationParams, FullParams> combiningFunction
                 = (time, loc) -> new FullParams(loc.row, loc.col, time);
 
-        threeParamsObs = Observable
+        fullParamsObs = Observable
                 .combineLatest(timeObs, locationObs, combiningFunction)
                 .doOnNext(tp -> Log.v(TAG, "emitting TP: " + tp))
                 // no need to cache as source observables do it already
@@ -67,7 +67,7 @@ public class ConfiguredUmService {
 
     public Observable<FullParams> get() {
         Log.v(TAG, "get()");
-        return threeParamsObs
+        return fullParamsObs
                 .doOnEach(notif -> Log.v(TAG, "TP-obs → " + notif.toString()))
                 ;
     }
@@ -80,7 +80,7 @@ public class ConfiguredUmService {
             return Observable.error(problem);
         }
 
-        return threeParamsObs
+        return fullParamsObs
                 .flatMap(tp -> {
                     int interval = this.interval.take(1).toBlocking().first();
                     Period timeAdjustment = Period.hours(-position * interval);

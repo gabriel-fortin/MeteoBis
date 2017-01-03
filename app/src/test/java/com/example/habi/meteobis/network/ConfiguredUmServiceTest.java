@@ -3,7 +3,6 @@ package com.example.habi.meteobis.network;
 import android.util.Log;
 
 import com.example.habi.meteobis.Util;
-import com.example.habi.meteobis.dagger.DaggerMeteogramComponent;
 import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.model.LocationParams;
 

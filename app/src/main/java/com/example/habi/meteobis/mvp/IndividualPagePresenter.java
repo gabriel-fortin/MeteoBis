@@ -80,6 +80,8 @@ public class IndividualPagePresenter implements MeteogramPresenter {
                     @Override
                     public void onNext(Object o) {
                         Log.d(TAG, "onNext: " + o);
+                        // TODO: 'FullParams' mogłoby być tutaj niewidoczne
+                        //       powinienem przekazywać rodzaj zdarzenia z serwisu
                         if (o instanceof FullParams) {
                             view.meteogramLoading();
                             return;

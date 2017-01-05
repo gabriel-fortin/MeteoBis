@@ -14,12 +14,12 @@ public class FullParams {
     public final int interval;
     public final String baseUrl;  // OR different meteogram service
 
-    FullParams(FullParams tp) {
-        this.row = tp.row;
-        this.col = tp.col;
-        this.date = tp.date;
-        this.interval = tp.interval;
-        this.baseUrl = tp.baseUrl;
+    FullParams(FullParams fp) {
+        this.row = fp.row;
+        this.col = fp.col;
+        this.date = fp.date;
+        this.interval = fp.interval;
+        this.baseUrl = fp.baseUrl;
     }
 
     public FullParams(int row, int col, DateTime date) {

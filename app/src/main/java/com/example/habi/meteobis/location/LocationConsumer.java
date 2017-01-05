@@ -1,11 +1,11 @@
 package com.example.habi.meteobis.location;
 
-import com.example.habi.meteobis.model.LocationParams;
+import com.example.habi.meteobis.model.LocationParam;
 
 /**
  * Created by Gabriel Fortin
  */
 
 public interface LocationConsumer {
-    void consume(LocationParams locationParam);
+    void consume(LocationParam locationParam);
 }

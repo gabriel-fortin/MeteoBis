@@ -1,7 +1,7 @@
 package com.example.habi.meteobis.service;
 
 import com.example.habi.meteobis.location.LocationConsumer;
-import com.example.habi.meteobis.model.LocationParams;
+import com.example.habi.meteobis.model.LocationParam;
 
 import rx.Observable;
 import rx.subjects.BehaviorSubject;
@@ -11,7 +11,7 @@ import rx.subjects.BehaviorSubject;
  */
 
 public class LocationService {
-    private final BehaviorSubject<LocationParams> behSub;
+    private final BehaviorSubject<LocationParam> behSub;
     private final LocationConsumer consumer;
 
     public LocationService() {
@@ -20,7 +20,7 @@ public class LocationService {
     }
 
     /** This observable emits an item upon subscribing to it. Unless it contains none */
-    public Observable<LocationParams> getObservable() {
+    public Observable<LocationParam> getObservable() {
         return behSub;
     }
 

@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.example.habi.meteobis.main.Util;
 import com.example.habi.meteobis.model.FullParams;
-import com.example.habi.meteobis.model.LocationParams;
+import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.service.ConfiguredUmService;
 
 import org.joda.time.DateTime;
@@ -44,7 +44,7 @@ public class ConfiguredUmServiceTest {
         UmMeteogramRetrofitService umMeteogramService = mock(UmMeteogramRetrofitService.class);
         DateTime someTime = DateTime.now();
         Observable<DateTime> time = Observable.just(someTime).cache(1);
-        BehaviorSubject<LocationParams> locationParams = BehaviorSubject.create();
+        BehaviorSubject<LocationParam> locationParams = BehaviorSubject.create();
         final int interval = 6;
 
         Queue<FullParams> expectedValues = new LinkedList<>(Arrays.asList(
@@ -54,8 +54,8 @@ public class ConfiguredUmServiceTest {
         ConfiguredUmService confUmService
                 = new ConfiguredUmService(umMeteogramService, time, locationParams, interval);
 
-        locationParams.onNext(new LocationParams(101, 301));
-        locationParams.onNext(new LocationParams(102, 302));
+        locationParams.onNext(new LocationParam(101, 301));
+        locationParams.onNext(new LocationParam(102, 302));
 
         Log.d(TAG, "will 'get()'");
         Subscription subscription = confUmService.get()
@@ -74,7 +74,7 @@ public class ConfiguredUmServiceTest {
                         }
                 );
 
-        locationParams.onNext(new LocationParams(103, 303));
+        locationParams.onNext(new LocationParam(103, 303));
 
         Log.d(TAG, "subscribed: " + subscription.isUnsubscribed());
 

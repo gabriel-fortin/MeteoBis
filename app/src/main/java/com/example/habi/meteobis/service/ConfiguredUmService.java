@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.example.habi.meteobis.main.Util;
 import com.example.habi.meteobis.model.FullParams;
-import com.example.habi.meteobis.model.LocationParams;
+import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import org.joda.time.DateTime;
@@ -36,7 +36,7 @@ public class ConfiguredUmService {
     // input observables
     private final Observable<Integer> interval;
     private final Observable<DateTime> timeObs;
-    private final Observable<LocationParams> locationObs;
+    private final Observable<LocationParam> locationObs;
 
     //output observable
     private final Observable<FullParams> fullParamsObs;
@@ -44,7 +44,7 @@ public class ConfiguredUmService {
     @Inject
     public ConfiguredUmService(UmMeteogramRetrofitService umService,
                                Observable<DateTime> timeParam,
-                               Observable<LocationParams> locationParam,
+                               Observable<LocationParam> locationParam,
                                int intervalParam) {
         this.umService = umService;
         this.timeObs = timeParam;
@@ -52,7 +52,7 @@ public class ConfiguredUmService {
         this.interval = Observable.just(intervalParam).cache(1);
             // TODO: either use a plain 'int' or accept an 'Observable' as param
 
-        final Func2<DateTime, LocationParams, FullParams> combiningFunction
+        final Func2<DateTime, LocationParam, FullParams> combiningFunction
                 = (time, loc) -> new FullParams(loc.row, loc.col, time);
 
         fullParamsObs = Observable

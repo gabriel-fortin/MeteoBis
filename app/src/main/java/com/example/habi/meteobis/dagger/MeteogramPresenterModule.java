@@ -1,7 +1,7 @@
 package com.example.habi.meteobis.dagger;
 
 import com.example.habi.meteobis.location.LocationConsumer;
-import com.example.habi.meteobis.model.LocationParams;
+import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.meteogram.IndividualPagePresenter;
 import com.example.habi.meteobis.mvp.MeteogramPresenter;
 import com.example.habi.meteobis.service.ConfiguredUmService;
@@ -35,7 +35,7 @@ public class MeteogramPresenterModule {
     static ConfiguredUmService provideConfiguredUmService(
             UmMeteogramRetrofitService umService,
             Observable<DateTime> time,
-            Observable<LocationParams> locationParams) {
+            Observable<LocationParam> locationParams) {
 
         int interval = 6;
         return new ConfiguredUmService(umService, time, locationParams, interval);
@@ -49,7 +49,7 @@ public class MeteogramPresenterModule {
     // TODO: move location related methods (the 3 one below) to a separate module
 
     @Provides
-    static Observable<LocationParams> provideLocationParams(LocationService locService) {
+    static Observable<LocationParam> provideLocationParams(LocationService locService) {
         return locService.getObservable();
     }
 

@@ -1,10 +1,10 @@
 package com.example.habi.meteobis.model;
 
-public class LocationParams {
+public class LocationParam {
     public final int row;
     public final int col;
 
-    public LocationParams(int row, int col) {
+    public LocationParam(int row, int col) {
         this.row = row;
         this.col = col;
     }

@@ -3,7 +3,7 @@ package com.example.habi.meteobis.location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.habi.meteobis.model.LocationParams;
+import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.mvp.LocationPresenter;
 
 import java.util.List;
@@ -36,11 +36,11 @@ public class SpinnerLocationPresenter implements LocationPresenter {
     @Override
     public void onLocationSelected(LocItem e) {
         // TODO: either keep this method and remove 'onLocationSelected(long)' or the inverse
-        LocationParams newLocation = getLocationFrom(e);
+        LocationParam newLocation = getLocationFrom(e);
         locationConsumer.consume(newLocation);
     }
 
-    private LocationParams getLocationFrom(LocItem locItem) {
+    private LocationParam getLocationFrom(LocItem locItem) {
         // TODO: implement 'getLocationFrom(LocItem)'
         throw new RuntimeException("NOT YET IMPLEMENTED");
     }

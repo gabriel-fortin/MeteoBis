@@ -9,4 +9,6 @@ public class LocationParam {
         this.col = col;
     }
 
+    public static LocationParam KRAKOW = new LocationParam(466, 232);
+
 }

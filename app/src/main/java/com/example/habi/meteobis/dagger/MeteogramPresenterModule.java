@@ -50,6 +50,9 @@ public class MeteogramPresenterModule {
 
     @Provides
     static Observable<LocationParam> provideLocationParams(LocationService locService) {
+        // TODO: delete defaulting location to "Kraków"
+        locService.getConsumer().consume(LocationParam.KRAKOW);
+
         return locService.getObservable();
     }
 

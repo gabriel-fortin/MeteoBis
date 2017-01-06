@@ -41,7 +41,7 @@ public class IndividualPagePresenter implements MeteogramPresenter {
         TAG = String.format(Locale.UK,
                 "%s#%s(%d)",
                 IndividualPagePresenter.class.getSimpleName(),
-                toString().substring(toString().length()-2),
+                toString().substring(toString().length()-4),
                 position);
         Log.d(TAG, "attach()");
 

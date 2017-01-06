@@ -69,7 +69,7 @@ public class ConfiguredUmService {
     public Observable<FullParams> get() {
         Log.v(TAG, "get()");
         return fullParamsObs
-                .doOnEach(notif -> Log.v(TAG, "TP-obs → " + notif.toString()))
+                .doOnEach(notif -> Log.v(TAG, "FP-obs → " + notif.toString()))
                 ;
     }
 
@@ -90,7 +90,7 @@ public class ConfiguredUmService {
                     return umService.getByDate(formattedDate, tp.col, tp.row);
                 })
                 .doOnEach(notif ->
-                        Log.v(TAG, "TP-obs(" + position + ") → " + notif.toString()))
+                        Log.v(TAG, "FP-obs(" + position + ") → " + notif.toString()))
                 ;
     }
 

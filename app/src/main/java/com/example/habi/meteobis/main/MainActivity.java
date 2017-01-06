@@ -19,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
     static {
         Log.i(TAG, "======== START =========");
     }
+    {
+        Log.i(TAG, "     new activity       ");
+    }
 
     private MeteogramsPagerAdapter meteogramsPagerAdapter;
     private ViewPager mViewPager;

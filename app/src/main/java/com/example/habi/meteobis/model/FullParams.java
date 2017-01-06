@@ -1,6 +1,7 @@
 package com.example.habi.meteobis.model;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import java.util.Locale;
 
@@ -32,6 +33,11 @@ public class FullParams {
 
     @Override
     public String toString() {
-        return String.format(Locale.UK, "(%d, %d, %s)", row, col, date.toString());
+        return String.format(Locale.UK,
+                "(%d, %d, %s)",
+                row,
+                col,
+                DateTimeFormat.shortDateTime().print(date)
+        );
     }
 }

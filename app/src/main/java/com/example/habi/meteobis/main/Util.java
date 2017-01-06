@@ -27,7 +27,7 @@ public class Util {
         int hour = (date.hourOfDay().get() / roundThresholdHours) * roundThresholdHours;
 
         DateTime result = new DateTime(year, month, day, hour, 0, date.getZone());
-        Log.d(TAG, "rounding:  " + date + "  -->  " + result);
+        Log.v(TAG, "rounding:  " + date + "  -->  " + result);
         return result;
     }
 

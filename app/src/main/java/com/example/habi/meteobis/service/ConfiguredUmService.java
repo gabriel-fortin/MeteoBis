@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.functions.Func2;
+import rx.schedulers.Schedulers;
 
 /** Wraps an UmMeteogramRetrofitService
  *  Takes care of data and location params – observes their changes
@@ -87,7 +88,10 @@ public class ConfiguredUmService {
                     Period timeAdjustment = Period.hours(-position * interval);
                     DateTime adjustedDate = tp.date.minus(timeAdjustment);
                     String formattedDate = Util.formatTime(adjustedDate);
-                    return umService.getByDate(formattedDate, tp.col, tp.row);
+                    return umService
+                            .getByDate(formattedDate, tp.col, tp.row)
+                            // prevent from downloading on UI thread
+                            .subscribeOn(Schedulers.io());
                 })
                 .doOnEach(notif ->
                         Log.v(TAG, "FP-obs(" + position + ") → " + notif.toString()))

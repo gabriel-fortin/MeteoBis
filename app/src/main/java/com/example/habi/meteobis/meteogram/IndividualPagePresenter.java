@@ -74,6 +74,7 @@ public class IndividualPagePresenter implements MeteogramPresenter {
                     @Override
                     public void onError(Throwable e) {
                         Log.w(TAG, "'onError': " + e);
+                        e.printStackTrace();
                         String msg = "observable from ConfiguredUmService erred: " + e;
                         view.meteogramError(msg);
                     }

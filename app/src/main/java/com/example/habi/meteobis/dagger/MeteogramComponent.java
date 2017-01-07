@@ -9,7 +9,10 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {RepositoryServiceModule.class, MeteogramPresenterModule.class})
+@Component(modules = {
+        RepositoryServiceModule.class,
+        MeteogramPresenterModule.class,
+        LocationModule.class })
 public interface MeteogramComponent {
     UmMeteogramRetrofitService provideUmMeteogramService();
     MeteogramPresenter provideMeteogramPresenter();

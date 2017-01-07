@@ -1,11 +1,9 @@
 package com.example.habi.meteobis.dagger;
 
-import com.example.habi.meteobis.location.LocationConsumer;
 import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.meteogram.IndividualPagePresenter;
 import com.example.habi.meteobis.mvp.MeteogramPresenter;
 import com.example.habi.meteobis.service.ConfiguredUmService;
-import com.example.habi.meteobis.service.LocationService;
 import com.example.habi.meteobis.service.TimeService;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
@@ -42,28 +40,9 @@ public class MeteogramPresenterModule {
     }
 
     @Provides
+    @Singleton
     static Observable<DateTime> provideTimeSticks() {
         return TimeService.getCurrentTimeStick(6, HOURS);
     }
 
-    // TODO: move location related methods (the 3 one below) to a separate module
-
-    @Provides
-    static Observable<LocationParam> provideLocationParams(LocationService locService) {
-        // TODO: delete defaulting location to "Kraków"
-        locService.getConsumer().consume(LocationParam.KRAKOW);
-
-        return locService.getObservable();
-    }
-
-    @Provides
-    static LocationConsumer consumeLocationParams(LocationService locService) {
-        return locService.getConsumer();
-    }
-
-    @Provides
-    @Singleton
-    static LocationService provideLocationService() {
-        return new LocationService();
-    }
 }

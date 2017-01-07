@@ -38,9 +38,7 @@ public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemVi
     private int position;
 
     public MeteoFragment() {
-        DaggerMeteogramComponent
-                .create()
-                .inject(this);
+        Config.getMeteogramComponent().inject(this);
     }
 
     /**

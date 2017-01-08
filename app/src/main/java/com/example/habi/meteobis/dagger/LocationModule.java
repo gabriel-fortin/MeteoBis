@@ -20,14 +20,16 @@ public class LocationModule {
     @Provides
     @Singleton
     LocationService provideLocationService() {
-        return new LocationService();
+        LocationService locationService = new LocationService();
+
+        // TODO: delete defaulting location to "Kraków" when UI for locations is ready
+        locationService.getConsumer().consume(LocationParam.KRAKOW);
+
+        return locationService;
     }
 
     @Provides
     Observable<LocationParam> provideLocationParams(LocationService locService) {
-        // TODO: delete defaulting location to "Kraków" when UI for locations is ready
-        locService.getConsumer().consume(LocationParam.KRAKOW);
-
         return locService.getObservable();
     }
 

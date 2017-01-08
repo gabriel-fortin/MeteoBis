@@ -59,8 +59,9 @@ public class ConfiguredUmService {
         fullParamsObs = Observable
                 .combineLatest(timeObs, locationObs, combiningFunction)
                 .doOnNext(tp -> Log.v(TAG, "emitting TP: " + tp))
-                // no need to cache as source observables do it already
+                // do source observables cache their emissions?
 //                .cache(1)
+                .replay(1).autoConnect()
                 ;
 
         // TODO: make possible to GC this object (unsubscribe? something else?)

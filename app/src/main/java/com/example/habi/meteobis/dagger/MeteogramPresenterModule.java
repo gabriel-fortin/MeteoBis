@@ -31,6 +31,7 @@ public class MeteogramPresenterModule {
 
     @Provides
     static ConfiguredUmService provideConfiguredUmService(
+    @Singleton
             UmMeteogramRetrofitService umService,
             Observable<DateTime> time,
             Observable<LocationParam> locationParams) {

@@ -29,8 +29,7 @@ import rx.schedulers.Schedulers;
  */
 public class ConfiguredUmService {
     private static final String TAG = ConfiguredUmService.class.getSimpleName();
-
-    // TODO: ensure that all observables are unsubscribed when no longer needed
+    private static int instanceCount = 0;
 
     private final UmMeteogramRetrofitService umService;
 
@@ -58,20 +57,18 @@ public class ConfiguredUmService {
 
         fullParamsObs = Observable
                 .combineLatest(timeObs, locationObs, combiningFunction)
-                .doOnNext(tp -> Log.v(TAG, "emitting TP: " + tp))
+                .doOnNext(tp -> Log.v(TAG, "emitting: " + tp))
                 // do source observables cache their emissions?
 //                .cache(1)
                 .replay(1).autoConnect()
                 ;
 
-        // TODO: make possible to GC this object (unsubscribe? something else?)
-
+        sanityCheck();
     }
 
     public Observable<FullParams> get() {
         Log.v(TAG, "get()");
         return fullParamsObs
-                .doOnEach(notif -> Log.v(TAG, "FP-obs → " + notif.toString()))
                 ;
     }
 
@@ -89,14 +86,23 @@ public class ConfiguredUmService {
                     Period timeAdjustment = Period.hours(-position * interval);
                     DateTime adjustedDate = tp.date.minus(timeAdjustment);
                     String formattedDate = Util.formatTime(adjustedDate);
+                    Log.v(TAG, String.format("will request for params: %s %d %d",
+                            formattedDate, tp.row, tp.col));
                     return umService
                             .getByDate(formattedDate, tp.col, tp.row)
                             // prevent from downloading on UI thread
                             .subscribeOn(Schedulers.io());
                 })
                 .doOnEach(notif ->
-                        Log.v(TAG, "FP-obs(" + position + ") → " + notif.toString()))
+                        Log.v(TAG, "FP-obs(" + position + ") → byte array " + notif.toString()))
                 ;
+    }
+
+    private static void sanityCheck() {
+        instanceCount++;
+        if (instanceCount > 1) {
+            Log.w(TAG, "sanity: surely it's not a singleton now");
+        }
     }
 
 

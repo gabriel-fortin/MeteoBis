@@ -32,6 +32,7 @@ public class Util {
     }
 
     public static String formatTime(DateTime dateTime) {
+        // TODO: use 'DateTimeFormat' or 'DateTimeFormatter' (both are in 'org.joda.time.format')
         int year = dateTime.year().get();
         int month = dateTime.monthOfYear().get();
         int day = dateTime.dayOfMonth().get();

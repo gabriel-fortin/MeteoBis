@@ -25,13 +25,13 @@ import static java.util.concurrent.TimeUnit.HOURS;
 public class MeteogramPresenterModule {
 
     @Provides
-    static MeteogramPresenter provideMeteogramPresenter(ConfiguredUmService cs) {
+    MeteogramPresenter provideMeteogramPresenter(ConfiguredUmService cs) {
         return new IndividualPagePresenter(cs);
     }
 
     @Provides
-    static ConfiguredUmService provideConfiguredUmService(
     @Singleton
+    ConfiguredUmService provideConfiguredUmService(
             UmMeteogramRetrofitService umService,
             Observable<DateTime> time,
             Observable<LocationParam> locationParams) {
@@ -42,7 +42,7 @@ public class MeteogramPresenterModule {
 
     @Provides
     @Singleton
-    static Observable<DateTime> provideTimeSticks() {
+    Observable<DateTime> provideTimeSticks() {
         return TimeService.getCurrentTimeStick(6, HOURS);
     }
 

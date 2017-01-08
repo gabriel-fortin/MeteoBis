@@ -28,7 +28,7 @@ public class MeteogramsPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        // TODO: implement this method correctly
+        // TODO: implement 'getPageTitle' method correctly
         switch (position) {
             case 0:
                 return "SECTION 1";

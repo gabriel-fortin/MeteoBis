@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import android.widget.TextView;
 
 import com.example.habi.meteobis.main.Config;
 import com.example.habi.meteobis.R;
-import com.example.habi.meteobis.dagger.DaggerMeteogramComponent;
 import com.example.habi.meteobis.mvp.MeteogramPresenter;
 
 import javax.inject.Inject;
@@ -26,6 +26,7 @@ import javax.inject.Inject;
  * Created by Gabriel Fortin
  */
 public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemView {
+    public static final String TAG = MeteoFragment.class.getSimpleName();
 
     /** The fragment argument representing the section number for this fragment. */
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -84,6 +85,7 @@ public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemVi
 
     @Override
     public void meteogramLoading() {
+        Log.v(TAG, "'meteogramLoading()'");
         sectionLabel.setText("loading...");
         // TODO: show something when meteogram is loading?
         //       → it needs to add something to the layout file, probably
@@ -91,6 +93,7 @@ public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemVi
 
     @Override
     public void meteogramImage(byte[] imageBytes) {
+        Log.v(TAG, "'meteogramImage()'");
         sectionLabel.setText("done: image");
         animateCardIn(img);
         displayImageFromBytes(img, imageBytes);
@@ -98,6 +101,7 @@ public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemVi
 
     @Override
     public void meteogramNotAvailable() {
+        Log.v(TAG, "'meteogramNotAvailable()'");
         sectionLabel.setText("done: unavailable");
         animateCardIn(img);
         displayUnavailableImage(img);
@@ -105,6 +109,7 @@ public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemVi
 
     @Override
     public void meteogramError(String text) {
+        Log.v(TAG, "'meteogramError()'");
         sectionLabel.setText("error: " + text);
     }
 

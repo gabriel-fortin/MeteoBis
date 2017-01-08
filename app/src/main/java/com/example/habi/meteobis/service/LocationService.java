@@ -41,12 +41,19 @@ public class LocationService {
     }
 
     private static Observable<LocationParam> attachLog(Observable<LocationParam> arg) {
-        return arg.doOnEach(notif -> Log.v(TAG,
-                String.format(
-                        "%s: %s",
-                        notif.getKind(),
-                        notif.hasValue() ? notif.getValue() : "--"
-                )));
+        return arg
+                .doOnSubscribe(() ->
+                        Log.v(TAG, String.format(
+                                "[#%s] new subscription for location params",
+                                arg.toString().substring(arg.toString().length() - 4))))
+                .doOnEach(notif -> {
+                    Log.i(TAG, String.format(
+                            "[#%s] %s: %s",
+                            arg.toString().substring(arg.toString().length() - 4),
+                            notif.getKind(),
+                            notif.hasValue() ? notif.getValue() : "--"
+                    ));
+                });
     }
 
     private static void sanityCheck() {

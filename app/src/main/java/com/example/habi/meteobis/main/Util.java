@@ -3,8 +3,8 @@ package com.example.habi.meteobis.main;
 import android.util.Log;
 
 import org.joda.time.DateTime;
-
-import java.util.Locale;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by Gabriel Fortin
@@ -32,12 +32,9 @@ public class Util {
     }
 
     public static String formatTime(DateTime dateTime) {
-        // TODO: use 'DateTimeFormat' or 'DateTimeFormatter' (both are in 'org.joda.time.format')
-        int year = dateTime.year().get();
-        int month = dateTime.monthOfYear().get();
-        int day = dateTime.dayOfMonth().get();
-        int hour = dateTime.hourOfDay().get();
-        String result = String.format(Locale.UK, "%d%02d%02d%02d", year, month, day, hour);
+        // y: year,  M: month,  d: day,  k: hour 1-24,  H: hour 0-23
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMddHH");
+        String result = formatter.print(dateTime);
         Log.v(TAG, "formatted time: " + result);
         return result;
     }

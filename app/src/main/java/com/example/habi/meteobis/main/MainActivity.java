@@ -23,43 +23,34 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "     new activity       ");
     }
 
-    private MeteogramsPagerAdapter meteogramsPagerAdapter;
-    private ViewPager mViewPager;
+
+    // elements of this activity
+    private Toolbar toolbar;
+    private MeteogramsPagerAdapter adapter;
+    private ViewPager viewPager;
     private FloatingActionButton fab;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // create or retrieve all used objects
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        viewPager = (ViewPager) findViewById(R.id.container);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        adapter = new MeteogramsPagerAdapter(getSupportFragmentManager());
+
+        // set toolbar
         setSupportActionBar(toolbar);
 
-        prepareFab();
+        // set view pager
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new FabVisibilityChanger(fab));
 
-        meteogramsPagerAdapter = new MeteogramsPagerAdapter(getSupportFragmentManager());
-        prepareViewPager();
-    }
-
-    private void prepareFab() {
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            mViewPager.setCurrentItem(Config.TOTAL_PAGES - 1);
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-        });
-    }
-
-    private void prepareViewPager() {
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(meteogramsPagerAdapter);
-        mViewPager.addOnPageChangeListener(new FabVisibilityChanger(fab));
-        mViewPager.setCurrentItem(Config.TOTAL_PAGES - 1);
-
-        // TODO: move margin to dimens and adjust with linked margins and paddings
-        mViewPager.setPageMargin(-60);
-        mViewPager.setOffscreenPageLimit(1);  // may want to change because of the margin
+        // set floating action button
+        fab.setOnClickListener(view -> viewPager.setCurrentItem(Config.TOTAL_PAGES - 1));
     }
 
 

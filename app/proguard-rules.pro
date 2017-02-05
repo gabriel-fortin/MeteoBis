@@ -15,3 +15,10 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+
+
+#-dontwarn android.support.**
+-dontwarn rx.internal.util.unsafe.**
+-dontwarn org.joda.convert.**
+

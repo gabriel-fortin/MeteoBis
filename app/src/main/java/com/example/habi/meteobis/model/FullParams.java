@@ -12,29 +12,27 @@ public class FullParams {
     public final int row;
     public final int col;
     public final DateTime date;
-    public final int interval;
-    public final String baseUrl;  // OR different meteogram service
+    public final ForecastModel model;
 
     FullParams(FullParams fp) {
         this.row = fp.row;
         this.col = fp.col;
         this.date = fp.date;
-        this.interval = fp.interval;
-        this.baseUrl = fp.baseUrl;
+        this.model = fp.model;
     }
 
-    public FullParams(int row, int col, DateTime date) {
+    public FullParams(int row, int col, DateTime date, ForecastModel model) {
         this.row = row;
         this.col = col;
         this.date = date;
-        this.interval = 0;  // TODO: use 'interval'
-        this.baseUrl = null;  // TODO: use 'baseUrl'
+        this.model = model;
     }
 
     @Override
     public String toString() {
         return String.format(Locale.UK,
-                "(%d, %d, %s)",
+                "(%s, %d, %d, %s)",
+                model,
                 row,
                 col,
                 DateTimeFormat.shortDateTime().print(date)

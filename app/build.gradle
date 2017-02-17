@@ -24,8 +24,8 @@ android {
         applicationId "com.example.habi.meteobis"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 3
-        versionName "0.3"
+        versionCode 5
+        versionName "dev-for-0.5"
         // multidex is enabled only for the 'release' build type
         // (it's incompatible with the built-in class shrinker)
         multiDexEnabled false

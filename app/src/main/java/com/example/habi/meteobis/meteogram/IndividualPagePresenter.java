@@ -1,17 +1,20 @@
 package com.example.habi.meteobis.meteogram;
 
-
 import android.util.Log;
 
+import com.example.habi.meteobis.ParamsProvider;
+import com.example.habi.meteobis.main.Util;
 import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.mvp.MeteogramPresenter;
-import com.example.habi.meteobis.service.ConfiguredUmService;
+import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
+
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -24,16 +27,22 @@ import rx.schedulers.Schedulers;
 public class IndividualPagePresenter implements MeteogramPresenter {
     private String TAG = IndividualPagePresenter.class.getSimpleName();
 
+    /* state */
     private ItemView view;
     private int pos;
 
-    private final ConfiguredUmService configuredService;
+    /* providers */
+    private final ParamsProvider paramsProvider;
+    private final UmMeteogramRetrofitService umService;
 
-    private Subscription subscription;
+    /* subscriptions */
+    private Subscription paramsSubscription;
+    private Subscription lastDataSubscription;
 
     @Inject
-    public IndividualPagePresenter(ConfiguredUmService cs) {
-        this.configuredService = cs;
+    public IndividualPagePresenter(ParamsProvider paramsProvider, UmMeteogramRetrofitService umService) {
+        this.paramsProvider = paramsProvider;
+        this.umService = umService;
     }
 
     @Override
@@ -50,24 +59,31 @@ public class IndividualPagePresenter implements MeteogramPresenter {
             detach(view);
         }
 
+        if (itemView == null) {
+            Log.e(TAG, "ItemView provided in 'attach' cannot be null");
+            return;
+        }
+
+        /* set state */
         view = itemView;
         pos = position;
 
+        /* update view */
         view.meteogramLoading();
 
+        /* begin obtaining data */
         startObserving();
     }
 
     private void startObserving() {
-        subscription = Observable
-                .merge(configuredService.get(), configuredService.get(pos))
+        paramsSubscription = paramsProvider.obtainParams()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Object>() {
+                .subscribe(new Observer<FullParams>() {
                     @Override
                     public void onCompleted() {
                         Log.e(TAG, "'onCompleted' where the stream is expected to last forever");
-                        String msg = "observable from ConfiguredUmService completed";
+                        String msg = "observable from ParamsProvider completed";
                         view.meteogramError(msg);
                     }
 
@@ -75,33 +91,51 @@ public class IndividualPagePresenter implements MeteogramPresenter {
                     public void onError(Throwable e) {
                         Log.w(TAG, "'onError': " + e);
                         e.printStackTrace();
-                        String msg = "observable from ConfiguredUmService erred: " + e;
+                        String msg = "observable from ParamsProvider erred: " + e;
                         view.meteogramError(msg);
                     }
 
                     @Override
-                    public void onNext(Object o) {
-                        Log.d(TAG, "onNext: " + o);
-                        // TODO: 'FullParams' mogłoby być tutaj niewidoczne
-                        //       powinienem przekazywać rodzaj zdarzenia z serwisu
-                        if (o instanceof FullParams) {
-                            view.meteogramLoading();
-                            return;
+                    public void onNext(FullParams params) {
+                        Log.d(TAG, "onNext: " + params + " Will retrieve image...");
+                        view.meteogramLoading();
+
+
+
+                        // TODO: extract composition of date string to a separate class
+                            int interval = params.model.interval;
+                            Period timeAdjustment = Period.hours(-pos * interval);
+                            DateTime adjustedDate = params.date.minus(timeAdjustment);
+                            String formattedDate = Util.formatTime(adjustedDate);
+                            Log.v(TAG, String.format("will request for params: %s %d %d",
+                                    formattedDate, params.row, params.col));
+
+
+                        // loose interest in the previous image retrieval
+                        if (lastDataSubscription != null) {
+                            lastDataSubscription.unsubscribe();
                         }
 
-                        if (o instanceof byte[]) {
-                            byte[] imageBytes = (byte[]) o;
-                            if (imageBytes.length < 1000) {
-                                view.meteogramNotAvailable();
-                            } else {
-                                view.meteogramImage(imageBytes);
-                            }
-                            return;
-                        }
-
-                        String msg = "unrecognised object in merged observable";
-                        Log.w(TAG, msg);
-                        view.meteogramError(msg);
+                        lastDataSubscription = umService
+                                .getByDate(formattedDate, params.col, params.row)
+                                // prevent from downloading on UI thread
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        (byte[] image) -> {
+                                            if (isValid(image)) {
+                                                Log.d(TAG, "got image");
+                                                view.meteogramImage(image);
+                                            } else {
+                                                Log.d(TAG, "got invalid image");
+                                                view.meteogramNotAvailable();
+                                            }
+                                        },
+                                        thr -> {
+                                            Log.w(TAG, "Image retrieval error: " + thr.getMessage());
+                                            view.meteogramError(thr.getMessage());
+                                        }
+                                );
                     }
                 });
     }
@@ -111,12 +145,24 @@ public class IndividualPagePresenter implements MeteogramPresenter {
         Log.d(TAG, "detach()");
         if (itemView != view) throw new RuntimeException("trying to detach a wrong view");
 
-        subscription.unsubscribe();
-        view.meteogramLoading();
+        /* unsubscribe */
+        if (lastDataSubscription != null) {
+            lastDataSubscription.unsubscribe();
+        }
+        paramsSubscription.unsubscribe();
 
-        // TODO: verify that unsubscribing is done correctly
+        /* reset view state */
+        view.meteogramNotAvailable();
 
+        /* clean references */
+        lastDataSubscription = null;
+        paramsSubscription = null;
         view = null;
+    }
+
+    private static boolean isValid(byte[] image) {
+        // if an image is not yet ready then something very small is returned
+        return image.length > 1000;
     }
 
 }

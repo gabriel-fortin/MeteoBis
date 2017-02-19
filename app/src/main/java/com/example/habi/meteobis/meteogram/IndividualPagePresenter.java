@@ -9,7 +9,6 @@ import com.example.habi.meteobis.mvp.Meteogram;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import org.joda.time.DateTime;
-import org.joda.time.Period;
 
 import java.util.Locale;
 
@@ -84,6 +83,7 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
                     public void onCompleted() {
                         Log.e(TAG, "'onCompleted' where the stream is expected to last forever");
                         String msg = "observable from ParamsProvider completed";
+
                         view.meteogramError(msg);
                     }
 
@@ -92,26 +92,18 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
                         Log.w(TAG, "'onError': " + e);
                         e.printStackTrace();
                         String msg = "observable from ParamsProvider erred: " + e;
+
                         view.meteogramError(msg);
                     }
 
                     @Override
                     public void onNext(FullParams params) {
                         Log.d(TAG, "onNext: " + params + " Will retrieve image...");
+                        String formattedDate = getFormattedDate(params, pos);
+
                         view.meteogramLoading();
 
-
-
-                        // TODO: extract composition of date string to a separate class
-                            int interval = params.model.interval;
-                            Period timeAdjustment = Period.hours(-pos * interval);
-                            DateTime adjustedDate = params.date.minus(timeAdjustment);
-                            String formattedDate = Util.formatTime(adjustedDate);
-                            Log.v(TAG, String.format("will request for params: %s %d %d",
-                                    formattedDate, params.row, params.col));
-
-
-                        // loose interest in the previous image retrieval
+                        /* loose interest in the previous image retrieval */
                         if (lastDataSubscription != null) {
                             lastDataSubscription.unsubscribe();
                         }
@@ -158,6 +150,19 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
         lastDataSubscription = null;
         paramsSubscription = null;
         view = null;
+    }
+
+    private String getFormattedDate(FullParams params, int pos) {
+        // TODO: this logic should be a technical detail of a networking class
+        DateTime adjustedDate = Util.calculateShiftedDate(params, pos);
+        String formattedDate = Util.formatTime(adjustedDate);
+
+        Log.v(TAG, String.format("will request for params: %s %d %d",
+                formattedDate,
+                params.row,
+                params.col));
+
+        return formattedDate;
     }
 
     private static boolean isValid(byte[] image) {

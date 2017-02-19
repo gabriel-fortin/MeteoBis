@@ -2,7 +2,10 @@ package com.example.habi.meteobis.main;
 
 import android.util.Log;
 
+import com.example.habi.meteobis.model.FullParams;
+
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -37,5 +40,12 @@ public class Util {
         String result = formatter.print(dateTime);
         Log.v(TAG, "formatted time: " + result);
         return result;
+    }
+
+    public static DateTime calculateShiftedDate(FullParams params, int pos) {
+        int interval = params.model.interval;
+        DateTime date = params.date;
+        Period timeAdjustment = Period.hours(-pos * interval);
+        return date.minus(timeAdjustment);
     }
 }

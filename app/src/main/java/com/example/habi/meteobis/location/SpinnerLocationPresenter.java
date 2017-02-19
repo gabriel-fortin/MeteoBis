@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.habi.meteobis.model.LocationParam;
-import com.example.habi.meteobis.mvp.LocationPresenter;
+import com.example.habi.meteobis.mvp.Location;
 
 import java.util.List;
 
@@ -17,30 +17,30 @@ import rx.Subscription;
  * Created by Gabriel Fortin
  */
 
-public class SpinnerLocationPresenter implements LocationPresenter {
+public class SpinnerLocationPresenter implements Location.Presenter {
     public static final String TAG = SpinnerLocationPresenter.class.getSimpleName();
     public static final String LOCATIONS_LIST_ENDED = "there will be no more updates of the locations' list";
 
-    private LocView view;
-    private final Observable<List<LocItem>> locationsListObs;
+    private Location.View view;
+    private final Observable<List<Location.Item>> locationsListObs;
     private final LocationConsumer locationConsumer;
     private Subscription dataSubscription;
 
     @Inject
-    public SpinnerLocationPresenter(@NonNull Observable<List<LocItem>> data,
+    public SpinnerLocationPresenter(@NonNull Observable<List<Location.Item>> data,
                                     @NonNull LocationConsumer locConsumer) {
         locationsListObs = data;
         locationConsumer = locConsumer;
     }
 
     @Override
-    public void onLocationSelected(LocItem e) {
+    public void onLocationSelected(Location.Item e) {
         // TODO: either keep this method and remove 'onLocationSelected(long)' or the inverse
         LocationParam newLocation = getLocationFrom(e);
         locationConsumer.consume(newLocation);
     }
 
-    private LocationParam getLocationFrom(LocItem locItem) {
+    private LocationParam getLocationFrom(Location.Item locItem) {
         // TODO: implement 'getLocationFrom(LocItem)'
         throw new RuntimeException("NOT YET IMPLEMENTED");
     }
@@ -52,7 +52,7 @@ public class SpinnerLocationPresenter implements LocationPresenter {
     }
 
     @Override
-    public void attach(@NonNull LocView pView) {
+    public void attach(@NonNull Location.View pView) {
         if (pView == null) throw new NullPointerException();
         if (pView == view) {
             Log.w(TAG, "trying to re-attach the same view again; ignoring request");
@@ -66,7 +66,7 @@ public class SpinnerLocationPresenter implements LocationPresenter {
     }
 
     @Override
-    public void detach(@NonNull LocView pView) {
+    public void detach(@NonNull Location.View pView) {
         if (pView == null) throw new NullPointerException();
         if (view == null) {
             Log.w(TAG, "trying to detach while no view is set; ignoring request");

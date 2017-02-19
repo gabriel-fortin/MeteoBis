@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.habi.meteobis.ParamsProvider;
 import com.example.habi.meteobis.main.Util;
 import com.example.habi.meteobis.model.FullParams;
-import com.example.habi.meteobis.mvp.MeteogramPresenter;
+import com.example.habi.meteobis.mvp.Meteogram;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import org.joda.time.DateTime;
@@ -24,11 +24,11 @@ import rx.schedulers.Schedulers;
  * Created by Gabriel Fortin
  */
 
-public class IndividualPagePresenter implements MeteogramPresenter {
+public class IndividualPagePresenter implements Meteogram.Presenter {
     private String TAG = IndividualPagePresenter.class.getSimpleName();
 
     /* state */
-    private ItemView view;
+    private Meteogram.View view;
     private int pos;
 
     /* providers */
@@ -46,7 +46,7 @@ public class IndividualPagePresenter implements MeteogramPresenter {
     }
 
     @Override
-    public void attach(ItemView itemView, int position) {
+    public void attach(Meteogram.View incomingView, int position) {
         TAG = String.format(Locale.UK,
                 "%s#%s(%d)",
                 IndividualPagePresenter.class.getSimpleName(),
@@ -59,13 +59,13 @@ public class IndividualPagePresenter implements MeteogramPresenter {
             detach(view);
         }
 
-        if (itemView == null) {
+        if (incomingView == null) {
             Log.e(TAG, "ItemView provided in 'attach' cannot be null");
             return;
         }
 
         /* set state */
-        view = itemView;
+        view = incomingView;
         pos = position;
 
         /* update view */
@@ -141,9 +141,9 @@ public class IndividualPagePresenter implements MeteogramPresenter {
     }
 
     @Override
-    public void detach(ItemView itemView) {  // TODO: może usunąć argument? po co on?
+    public void detach(Meteogram.View aView) {  // TODO: może usunąć argument? po co on?
         Log.d(TAG, "detach()");
-        if (itemView != view) throw new RuntimeException("trying to detach a wrong view");
+        if (aView != view) throw new RuntimeException("trying to detach a wrong view");
 
         /* unsubscribe */
         if (lastDataSubscription != null) {

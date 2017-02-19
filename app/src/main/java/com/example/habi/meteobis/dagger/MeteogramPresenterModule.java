@@ -4,7 +4,7 @@ import com.example.habi.meteobis.ParamsProvider;
 import com.example.habi.meteobis.model.ForecastModel;
 import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.meteogram.IndividualPagePresenter;
-import com.example.habi.meteobis.mvp.MeteogramPresenter;
+import com.example.habi.meteobis.mvp.Meteogram;
 import com.example.habi.meteobis.service.ParamsMerger;
 import com.example.habi.meteobis.service.TimeService;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
@@ -27,7 +27,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 public class MeteogramPresenterModule {
 
     @Provides
-    MeteogramPresenter provideMeteogramPresenter(ParamsProvider pp, UmMeteogramRetrofitService rs) {
+    Meteogram.Presenter provideMeteogramPresenter(ParamsProvider pp, UmMeteogramRetrofitService rs) {
         return new IndividualPagePresenter(pp, rs);
     }
 

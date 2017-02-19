@@ -18,21 +18,21 @@ import android.widget.TextView;
 
 import com.example.habi.meteobis.main.Config;
 import com.example.habi.meteobis.R;
-import com.example.habi.meteobis.mvp.MeteogramPresenter;
+import com.example.habi.meteobis.mvp.Meteogram;
 
 import javax.inject.Inject;
 
 /**
  * Created by Gabriel Fortin
  */
-public class MeteoFragment extends Fragment implements MeteogramPresenter.ItemView {
+public class MeteoFragment extends Fragment implements Meteogram.View {
     public static final String TAG = MeteoFragment.class.getSimpleName();
 
     /** The fragment argument representing the section number for this fragment. */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     @Inject
-    public MeteogramPresenter presenter;
+    public Meteogram.Presenter presenter;
 
     private TextView sectionLabel;
     private ImageView img;

@@ -3,7 +3,7 @@ package com.example.habi.meteobis.meteogram;
 import android.util.Log;
 
 import com.example.habi.meteobis.ParamsProvider;
-import com.example.habi.meteobis.main.Util;
+import com.example.habi.meteobis.main.TimeUtils;
 import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.mvp.Meteogram;
 import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
@@ -154,8 +154,8 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
 
     private String getFormattedDate(FullParams params, int pos) {
         // TODO: this logic should be a technical detail of a networking class
-        DateTime adjustedDate = Util.calculateShiftedDate(params, pos);
-        String formattedDate = Util.formatTime(adjustedDate);
+        DateTime adjustedDate = TimeUtils.calculateShiftedDate(params, pos);
+        String formattedDate = TimeUtils.formatTime(adjustedDate);
 
         Log.v(TAG, String.format("will request for params: %s %d %d",
                 formattedDate,

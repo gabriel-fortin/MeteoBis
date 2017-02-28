@@ -67,6 +67,9 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
         view = incomingView;
         pos = position;
 
+        /* prevent NPE */
+        lastDataSubscription = Subscriptions.unsubscribed();
+
         /* update view */
         view.meteogramLoading();
 
@@ -104,9 +107,7 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
                         view.meteogramLoading();
 
                         /* loose interest in the previous image retrieval */
-                        if (lastDataSubscription != null) {
-                            lastDataSubscription.unsubscribe();
-                        }
+                        lastDataSubscription.unsubscribe();
 
                         lastDataSubscription = umService
                                 .getByDate(formattedDate, params.col, params.row)
@@ -138,10 +139,8 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
         if (aView != view) throw new RuntimeException("trying to detach a wrong view");
 
         /* unsubscribe */
-        if (lastDataSubscription != null) {
-            lastDataSubscription.unsubscribe();
-        }
         paramsSubscription.unsubscribe();
+        lastDataSubscription.unsubscribe();
 
         /* reset view state */
         view.meteogramNotAvailable();

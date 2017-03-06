@@ -23,5 +23,5 @@ public interface DataManager {
 	void plantTime(Observable<DateTime> time);
 	void putTime(DateTime time);
 
-	byte[] getImage(FullParams params);
+	Observable<byte[]> getImage(FullParams params);
 }

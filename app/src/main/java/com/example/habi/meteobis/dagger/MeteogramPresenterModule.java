@@ -1,13 +1,14 @@
 package com.example.habi.meteobis.dagger;
 
+import com.example.habi.meteobis.DataManager;
 import com.example.habi.meteobis.ParamsProvider;
+import com.example.habi.meteobis.SimpleDataManager;
 import com.example.habi.meteobis.model.ForecastModel;
 import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.meteogram.IndividualPagePresenter;
 import com.example.habi.meteobis.mvp.Meteogram;
 import com.example.habi.meteobis.service.ParamsMerger;
 import com.example.habi.meteobis.service.TimeService;
-import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import org.joda.time.DateTime;
 
@@ -27,8 +28,8 @@ import static java.util.concurrent.TimeUnit.HOURS;
 public class MeteogramPresenterModule {
 
     @Provides
-    Meteogram.Presenter provideMeteogramPresenter(ParamsProvider pp, UmMeteogramRetrofitService rs) {
-        return new IndividualPagePresenter(pp, rs);
+    Meteogram.Presenter provideMeteogramPresenter(ParamsProvider pp, DataManager dm) {
+        return new IndividualPagePresenter(pp.obtainParams(), dm);
     }
 
     @Provides
@@ -60,6 +61,12 @@ public class MeteogramPresenterModule {
     Observable<ForecastModel> provideForecastModel() {
         // TODO: implement forecast model changes
         return Observable.just(ForecastModel.UM);
+    }
+
+    @Provides
+    @Singleton
+    DataManager provideDataManager() {
+        return new SimpleDataManager();
     }
 
 }

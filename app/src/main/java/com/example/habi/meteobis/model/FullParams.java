@@ -28,6 +28,10 @@ public class FullParams {
         this.model = model;
     }
 
+    public FullParams withDate(DateTime newDate) {
+        return new FullParams(this.row, this.col, newDate, this.model);
+    }
+
     @Override
     public String toString() {
         return String.format(Locale.UK,

@@ -2,11 +2,10 @@ package com.example.habi.meteobis.meteogram;
 
 import android.util.Log;
 
-import com.example.habi.meteobis.ParamsProvider;
+import com.example.habi.meteobis.DataManager;
 import com.example.habi.meteobis.main.TimeUtils;
 import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.mvp.Meteogram;
-import com.example.habi.meteobis.network.UmMeteogramRetrofitService;
 
 import org.joda.time.DateTime;
 
@@ -14,10 +13,12 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.Subscriptions;
 
 /**
  * Created by Gabriel Fortin
@@ -31,17 +32,17 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
     private int pos;
 
     /* providers */
-    private final ParamsProvider paramsProvider;
-    private final UmMeteogramRetrofitService umService;
+    private final DataManager dataManager;
+    private final Observable<FullParams> paramsSource;
 
     /* subscriptions */
     private Subscription paramsSubscription;
     private Subscription lastDataSubscription;
 
     @Inject
-    public IndividualPagePresenter(ParamsProvider paramsProvider, UmMeteogramRetrofitService umService) {
-        this.paramsProvider = paramsProvider;
-        this.umService = umService;
+    public IndividualPagePresenter(Observable<FullParams> paramsSource, DataManager dataManager) {
+        this.paramsSource = paramsSource;
+        this.dataManager = dataManager;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
     }
 
     private void startObserving() {
-        paramsSubscription = paramsProvider.obtainParams()
+        paramsSubscription = paramsSource
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<FullParams>() {
@@ -102,15 +103,14 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
                     @Override
                     public void onNext(FullParams params) {
                         Log.d(TAG, "onNext: " + params + " Will retrieve image...");
-                        String formattedDate = getFormattedDate(params, pos);
 
                         view.meteogramLoading();
 
-                        /* loose interest in the previous image retrieval */
+                        /* loose interest in any previous image retrieval */
                         lastDataSubscription.unsubscribe();
 
-                        lastDataSubscription = umService
-                                .getByDate(formattedDate, params.col, params.row)
+                        DateTime shifted = TimeUtils.calculateShiftedDate(params, pos);
+                        lastDataSubscription = dataManager.getImage(params.withDate(shifted))
                                 // prevent from downloading on UI thread
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -142,26 +142,10 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
         paramsSubscription.unsubscribe();
         lastDataSubscription.unsubscribe();
 
-        /* reset view state */
-        view.meteogramNotAvailable();
-
         /* clean references */
         lastDataSubscription = null;
         paramsSubscription = null;
         view = null;
-    }
-
-    private String getFormattedDate(FullParams params, int pos) {
-        // TODO: this logic should be a technical detail of a networking class
-        DateTime adjustedDate = TimeUtils.calculateShiftedDate(params, pos);
-        String formattedDate = TimeUtils.formatTime(adjustedDate);
-
-        Log.v(TAG, String.format("will request for params: %s %d %d",
-                formattedDate,
-                params.row,
-                params.col));
-
-        return formattedDate;
     }
 
     private static boolean isValid(byte[] image) {

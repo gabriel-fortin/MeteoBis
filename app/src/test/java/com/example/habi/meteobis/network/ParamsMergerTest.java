@@ -2,7 +2,6 @@ package com.example.habi.meteobis.network;
 
 import android.util.Log;
 
-import com.example.habi.meteobis.main.Util;
 import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.service.ParamsMerger;

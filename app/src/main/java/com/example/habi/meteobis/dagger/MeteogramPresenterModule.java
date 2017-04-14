@@ -1,9 +1,9 @@
 package com.example.habi.meteobis.dagger;
 
 import com.example.habi.meteobis.DataManager;
-import com.example.habi.meteobis.ParamsProvider;
 import com.example.habi.meteobis.SimpleDataManager;
 import com.example.habi.meteobis.model.ForecastModel;
+import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.model.LocationParam;
 import com.example.habi.meteobis.meteogram.IndividualPagePresenter;
 import com.example.habi.meteobis.mvp.Meteogram;
@@ -28,24 +28,24 @@ import static java.util.concurrent.TimeUnit.HOURS;
 public class MeteogramPresenterModule {
 
     @Provides
-    Meteogram.Presenter provideMeteogramPresenter(ParamsProvider pp, DataManager dm) {
-        return new IndividualPagePresenter(pp.obtainParams(), dm);
+    Meteogram.Presenter provideMeteogramPresenter(Observable<FullParams> fp, DataManager dm) {
+        return new IndividualPagePresenter(fp, dm);
     }
 
     @Provides
     @Singleton
-    ParamsProvider provideParamsMerger(
+    Observable<FullParams> provideParamsMerger(
             Observable<DateTime> time,
             Observable<LocationParam> locationParams,
             Observable<ForecastModel> forecastModel) {
 
-        return new ParamsMerger(time, locationParams, forecastModel);
+        return new ParamsMerger(time, locationParams, forecastModel).obtainParams();
     }
 
     @Provides
     @Singleton
-    Observable<DateTime> provideTimeSticks(Observable<ForecastModel> forecastModelObservable) {
-        return forecastModelObservable
+    Observable<DateTime> provideTimeSticks(DataManager dm) {
+        return dm.obtainForecastModel()
                 // extract interval value
                 .map(fm -> fm.interval)
                 // do not emit a new 'DateTime' if the interval did not change

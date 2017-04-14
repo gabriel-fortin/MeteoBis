@@ -86,7 +86,7 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
                     @Override
                     public void onCompleted() {
                         Log.e(TAG, "'onCompleted' where the stream is expected to last forever");
-                        String msg = "observable from ParamsProvider completed";
+                        String msg = "observable of 'FullParams' completed";
 
                         view.meteogramError(msg);
                     }
@@ -95,7 +95,7 @@ public class IndividualPagePresenter implements Meteogram.Presenter {
                     public void onError(Throwable e) {
                         Log.w(TAG, "'onError': " + e);
                         e.printStackTrace();
-                        String msg = "observable from ParamsProvider erred: " + e;
+                        String msg = "observable of 'FullParams' erred: " + e;
 
                         view.meteogramError(msg);
                     }

@@ -6,7 +6,6 @@ package com.example.habi.meteobis.service;
 
 import android.util.Log;
 
-import com.example.habi.meteobis.ParamsProvider;
 import com.example.habi.meteobis.model.ForecastModel;
 import com.example.habi.meteobis.model.FullParams;
 import com.example.habi.meteobis.model.LocationParam;
@@ -18,7 +17,7 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.functions.Func3;
 
-public class ParamsMerger implements ParamsProvider {
+public class ParamsMerger {
     private static final String TAG = ParamsMerger.class.getSimpleName();
     private static int instanceCount = 0;
 

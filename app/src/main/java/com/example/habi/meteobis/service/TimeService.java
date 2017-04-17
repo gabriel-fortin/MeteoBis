@@ -2,7 +2,7 @@ package com.example.habi.meteobis.service;
 
 import android.util.Log;
 
-import com.example.habi.meteobis.main.Util;
+import com.example.habi.meteobis.main.TimeUtils;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -30,7 +30,7 @@ public class TimeService {
 
         sanityCheck();
 
-        DateTime beginningTime = Util.round(DateTime.now(), interval);
+        DateTime beginningTime = TimeUtils.round(DateTime.now(), interval);
 
         // TODO: implement time updating every 'interval' hours
         //       (can use e.g. 'doOnNext' to publish the next time-item using 'onNext'

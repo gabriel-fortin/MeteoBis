@@ -12,8 +12,8 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * Created by Gabriel Fortin
  */
-public class Util {
-    private static final String TAG = Util.class.getSimpleName();
+public class TimeUtils {
+    private static final String TAG = TimeUtils.class.getSimpleName();
 
     /**
      * Rounds the hour value of <code>date</code> down to a multiple of
